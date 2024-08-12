@@ -33,14 +33,6 @@ dotnet watch --no-hot-reload
 dotnet new
 ```
 
-
-### Commands
-
-- Create a new .NET project.
-```bash
-dotnet new
-```
-
 - List new command options. The Short Name column has templates to use. Example:
 ```bash
 dotnet new webapi -controllers -n API
