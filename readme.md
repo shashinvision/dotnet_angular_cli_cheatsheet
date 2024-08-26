@@ -52,6 +52,11 @@ dotnet build
 ```bash
 dotnet run
 ```
+- Build and run a project on specific/different port.
+
+```bash
+dotnet run --urls "http://127.0.0.1:<new-port>"
+```
 
 - Run unit tests using a test runner specified in the project.
 ```bash
