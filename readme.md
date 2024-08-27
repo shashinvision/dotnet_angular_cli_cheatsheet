@@ -208,6 +208,10 @@ dotnet new webapi -h
 ```bash
 dotnet new webapi -controllers -h
 ```
+- ADD New package
+```bash
+dotnet add package Microsoft.AspNetCore.Authentication.JwtBearer
+```
 
 ## Angular CLI 
 ```bash
