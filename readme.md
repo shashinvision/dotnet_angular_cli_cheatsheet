@@ -216,6 +216,42 @@ dotnet add package Microsoft.AspNetCore.Authentication.JwtBearer
 ```bash
  dotnet watch --no-hot-reload
 ```
+
+- List of vesions of SDK
+```bash
+dotnet --list-sdks
+```
+```bash
+dotnet --version
+```
+**WORK With differents SDK versions**
+
+When we install each dotnet core SDK on OS, the each project can use SDKs version separately. Because the SDK have global installation. We can configuration each project settings by create global.json via this command:
+```bash
+dotnet new globaljson
+```
+and finally selected the correct version.
+
+The process for selecting an SDK version is:
+
+dotnet searches for a **global.json** file iteratively reverse-navigating the path upward from the current working directory.
+dotnet uses the SDK specified in the first **global.json** found.
+dotnet uses the latest installed SDK if no **lobal.json** is found.
+
+References: https://learn.microsoft.com/en-us/dotnet/core/tools/global-json?tabs=netcore3x#globaljson-and-the-net-core-cli
+
+Step-by-Step: https://stackoverflow.com/a/42078060/14557383
+
+
+## Example usin dotnet CLI with other version
+```bash
+dotnet new webapi -n controlgastos --no-https 
+```
+
+![dotnet_versions](./files/dotnet_versions.png)
+
+
+
 ## Angular CLI 
 ```bash
 npm install -g @angular/cli
