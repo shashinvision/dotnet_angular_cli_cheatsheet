@@ -228,8 +228,13 @@ dotnet --version
 
 When we install each dotnet core SDK on OS, the each project can use SDKs version separately. Because the SDK have global installation. We can configuration each project settings by create global.json via this command:
 ```bash
-dotnet new globaljson
+dotnet new globaljson --force
 ```
+- Edit the version from dotnet --list-sdks
+```bash
+vim global.json
+```
+
 and finally selected the correct version.
 
 The process for selecting an SDK version is:
