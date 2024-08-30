@@ -276,6 +276,10 @@ ng new client
 ```bash
 ng serve
 ```
+- To use Serve with open automatically on browser
+```bash
+ng serve -o
+```
 
 ## '[optional]' Use mkcert to create  locally-trusted certificates on boostrap project **https://github.com/FiloSottile/mkcert** 
 - on Mac '(use the repository readme for more instructions)'
