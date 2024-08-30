@@ -212,7 +212,10 @@ dotnet new webapi -controllers -h
 ```bash
 dotnet add package Microsoft.AspNetCore.Authentication.JwtBearer
 ```
-
+- Watch with no hot reaload
+```bash
+ dotnet watch --no-hot-reload
+```
 ## Angular CLI 
 ```bash
 npm install -g @angular/cli
@@ -300,8 +303,5 @@ ng g s _services/members --skip-tests
 ```bash
 ng g environments
 ```
-- Watch with no hot reaload
-```bash
- dotnet watch --no-hot-reload
-```
+
 
