@@ -243,9 +243,13 @@ References: https://learn.microsoft.com/en-us/dotnet/core/tools/global-json?tabs
 Step-by-Step: https://stackoverflow.com/a/42078060/14557383
 
 
-## Example usin dotnet CLI with other version
+## Example usin dotnet CLI with in version 6 usin differents versions on global.json
 ```bash
 dotnet new webapi -n controlgastos --no-https 
+```
+## Example usin dotnet CLI with in version 8
+```bash
+dotnet new webapi -controllers -n controlgastos
 ```
 
 ![dotnet_versions](./files/dotnet_versions.png)
