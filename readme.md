@@ -6,7 +6,7 @@ mkdir DatingApp
 cd DatingApp  
 
 # Create a new solution file in the current directory. This command initializes a new .NET solution file (.sln) that will contain one or more projects.
-dotnet new sln  
+dotnet new sln -n API
 
 # Create a new Web API project named API with controllers. This command generates a new Web API project with the specified name API and includes support for controllers.
 dotnet new webapi -controllers -n API    
@@ -77,7 +77,11 @@ dotnet tool
 ```bash
 dotnet clean
 ```
-
+- Use [NuGet](https://www.nuget.org/).
+- NuGet command-line.
+```bash
+dotnet nuget
+```
 - Create a NuGet package.
 ```bash
 dotnet pack
@@ -96,11 +100,6 @@ dotnet migrate
 - Modify solution (SLN) files.
 ```bash
 dotnet sln
-```
-
-- NuGet command-line.
-```bash
-dotnet nuget
 ```
 
 
@@ -143,7 +142,7 @@ dotnet tool list -g
 ```bash
 dotnet tool install --global dotnet-ef --version 8.0.3
 ```
-- Use [NuGet](https://www.nuget.org/).
+
 
 - To view a help page of migrations.
 ```bash
@@ -217,6 +216,8 @@ dotnet add package Microsoft.AspNetCore.Authentication.JwtBearer
  dotnet watch --no-hot-reload
 ```
 
+**WORK With differents SDK versions**
+
 - List of vesions of SDK
 ```bash
 dotnet --list-sdks
@@ -224,7 +225,6 @@ dotnet --list-sdks
 ```bash
 dotnet --version
 ```
-**WORK With differents SDK versions**
 
 When we install each dotnet core SDK on OS, the each project can use SDKs version separately. Because the SDK have global installation. We can configuration each project settings by create global.json via this command:
 ```bash
