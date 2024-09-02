@@ -250,12 +250,48 @@ Step-by-Step: https://stackoverflow.com/a/42078060/14557383
 
 ## Example usin dotnet CLI with in version 6 usin differents versions on global.json
 ```bash
-dotnet new webapi -n controlgastos --no-https 
+dotnet new webapi -n Api --no-https 
 ```
-## Example usin dotnet CLI with in version 8
+
+## Example usin dotnet CLI with in version 8 and controllers template
 ```bash
-dotnet new webapi -controllers -n controlgastos
+dotnet new webapi -controllers -n Api
 ```
+## Example Create a Manual Solution file 
+```bash
+dotnet new sln -n Api
+
+mkdir Api.Api
+mkdir Api.Tests
+mkdir Api.IntegrationTests
+
+cd Api.Api
+dotnet new webapi
+cd ..
+
+cd Api.Tests
+dotnet new xunit
+cd ..
+
+cd Api.IntegrationTests
+dotnet new xunit
+cd ..
+```
+
+```bash
+dotnet sln Api.sln add Api.Api/Api.Api.csproj
+dotnet sln Api.sln add Api.Tests/Api.Tests.csproj
+dotnet sln Api.sln add Api.IntegrationTests/Api.IntegrationTests.csproj
+
+cd Api.Tests
+dotnet add reference ../Api.Api/Api.Api.csproj
+cd ..
+
+cd Api.IntegrationTests
+dotnet add reference ../Api.Api/Api.Api.csproj
+cd ..
+```
+
 
 ![dotnet_versions](./files/dotnet_versions.png)
 
