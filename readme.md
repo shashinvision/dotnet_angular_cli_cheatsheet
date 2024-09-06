@@ -15,7 +15,8 @@ dotnet new webapi -controllers -n API
 dotnet sln list 
 
 # Add the API project to the solution. This command includes the API project into the solution file, allowing it to be managed and built as part of the solution.
-dotnet sln add API 
+dotnet sln API.sln add API/API.csproj
+
 
 # Build and run the API project. This command compiles and executes the API project, starting the Web API application.
 dotnet run
