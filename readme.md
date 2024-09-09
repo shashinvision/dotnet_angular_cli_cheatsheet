@@ -394,7 +394,7 @@ ng generate component nav --dry-run
 ```
 - Create a Component nav using --skip-tests option
 ```bash
-ng generate component nav --skip-tests --dry-run
+ng generate component nav --skip-tests
 ```
 - Example Create a Service --skip-tests option
 ```bash
