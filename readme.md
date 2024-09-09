@@ -326,6 +326,8 @@ ng version
 - New Angular project, in this case we use SPA not SSR, with CSS 
 ```bash 
 ng new [PROJECT NAME]
+cd [PROJECT NAME]
+ng serve
 ```
 - To use Serve
 ```bash
