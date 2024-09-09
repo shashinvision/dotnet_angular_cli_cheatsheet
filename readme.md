@@ -301,6 +301,10 @@ cd ..
 
 
 ## Angular CLI 
+- Install Current Angular CLI 
+```bash
+npm install -g @angular/cli
+```
 - Install different version of Angular NG CLI if you need it  
 ```bash
 npm uninstall -g @angular/cli
