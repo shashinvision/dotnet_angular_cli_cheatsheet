@@ -312,7 +312,7 @@ npm uninstall -g @angular/cli
 ```bash
 npm install -g @angular/cli@14
 ```
-
+```bash
 npm install -g @angular/cli
 ```
 - For specific verion use
@@ -323,12 +323,21 @@ npm install -g @angular/cli@17
 ```bash
 ng version
 ```
-- New Angular project, in this case we use SPA not SSR, with CSS 
+
+
+
+- New standalone Angular project, in this case we use SPA not SSR, with CSS 
 ```bash 
 ng new [PROJECT NAME]
 cd [PROJECT NAME]
 ng serve
 ```
+
+- Create a Modular project 
+```bash
+ng new Client --standalone=false
+```
+
 - To use Serve
 ```bash
 ng serve
