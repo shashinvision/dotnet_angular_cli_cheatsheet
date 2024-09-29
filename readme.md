@@ -299,7 +299,10 @@ cd ..
 ![dotnet_versions](./files/dotnet_versions.png)
 
 
-## Jupyter Notebooks with .NET and C#
+# Jupyter Notebooks with .NET and C#
+
+![jupyter NET](./files/Jupyter%20NET.jpg)
+![jupyter NET VSCODE](./files/Jupyter%20NET%20VSCODE.jpg)
 
 ### Setup Jupyter for C# locally
 
