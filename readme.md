@@ -299,6 +299,52 @@ cd ..
 ![dotnet_versions](./files/dotnet_versions.png)
 
 
+## Jupyter Notebooks with .NET and C#
+
+### Setup Jupyter for C# locally
+
+- Latest dotnet 5.0+ SDK
+- Python 3.7+ with pip
+### Install jupyterlab to default Python interpreter
+```bash
+pip install jupyterlab
+```
+### Install Dotnet Interactive dotnet tool
+
+```bash
+dotnet tool install -g Microsoft.dotnet-interactive
+```
+### Get Dotnet Interactive to register kernels with Jupyter  
+
+```bash
+dotnet interactive jupyter install
+```
+```bash
+jupyter kernelspec list
+```
+```bash
+jupyter lab build   
+```
+```bash
+jupyter-lab
+```
+
+## Alternative using X Tool on NET CLI 
+```bash
+dotnet tool install --global x
+```
+```bash
+dotnet tool update -g x
+```
+```bash
+x jupyter-csharp
+```
+```bash
+x jupyter-csharp <a href="https://techstacks.io">https://techstacks.io</a> FindTechStacks "{Ids:[1,2,3],VendorName:'Google',Take:5}"
+```
+### Output example: 
+Saved to: techstacks.io-FindTechStacks.ipynb
+
 
 ## Angular CLI 
 - Install Current Angular CLI 
