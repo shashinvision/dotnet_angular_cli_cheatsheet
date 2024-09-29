@@ -345,6 +345,8 @@ x jupyter-csharp <a href="https://techstacks.io">https://techstacks.io</a> FindT
 ### Output example: 
 Saved to: techstacks.io-FindTechStacks.ipynb
 
+Source: https://docs.servicestack.net/jupyter-notebooks-csharp#generate-c-jupyter-notebooks
+
 
 ## Angular CLI 
 - Install Current Angular CLI 
