@@ -1,6 +1,6 @@
-### Example Project Setup with DOTNET 8.03
+## Dotnet and Angular CLI Cheat Sheet
 
-## Install dotnet with differents version on Linux , exaple with 6 and 8 version
+### Install dotnet with differents version on Linux , exaple with 6 and 8 version
 
 ```bash
 mkdir ~/.dotnet
@@ -17,9 +17,13 @@ tar -zxf dotnet-sdk-6.0.425-linux-x64.tar.gz -C ~/.dotnet
 ```bash
 dotnet --list-sdks
 ```
+In yout .zshrc or .bashrc put this
+```
+export DOTNET_ROOT=$HOME/.dotnet
+export PATH=$HOME/.dotnet:$PATH
+```
 
-
-
+### Example Project Setup with DOTNET 8.03
 
 ```bash
 
