@@ -1,5 +1,26 @@
 ### Example Project Setup with DOTNET 8.03
 
+## Install dotnet with differents version on Linux , exaple with 6 and 8 version
+
+```bash
+mkdir ~/.dotnet
+```
+```bash
+wget https://builds.dotnet.microsoft.com/dotnet/Sdk/8.0.408/dotnet-sdk-8.0.408-linux-x64.tar.gz
+tar -zxf dotnet-sdk-8.0.408-linux-x64.tar.gz -C ~/.dotnet
+```
+
+```bash
+wget https://builds.dotnet.microsoft.com/dotnet/Sdk/6.0.425/dotnet-sdk-6.0.425-linux-x64.tar.gz
+tar -zxf dotnet-sdk-6.0.425-linux-x64.tar.gz -C ~/.dotnet
+```
+```bash
+dotnet --list-sdks
+```
+
+
+
+
 ```bash
 
 mkdir DatingApp   
