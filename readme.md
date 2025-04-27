@@ -22,6 +22,14 @@ In yout .zshrc or .bashrc put this
 export DOTNET_ROOT=$HOME/.dotnet
 export PATH=$HOME/.dotnet:$PATH
 ```
+Next put this on your terminal to reload the config 
+```
+source ~/.zshrc
+```
+or
+```
+source ~/.bashrc
+```
 
 ### Example Project Setup with DOTNET 8.03
 
