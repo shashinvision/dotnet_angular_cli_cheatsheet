@@ -2,6 +2,22 @@
 
 ### Install dotnet with differents version on Linux , exaple with 6 and 8 version
 
+## Warning just if on Linux or mac show errors with omnisharp on NeoVim/LazyVim
+```bash
+sudo apt update
+sudo apt install mono-complete
+```
+```bash
+brew install mono
+```
+```bash
+# Download the latest version of omnisharp-roslyn
+git clone https://github.com/OmniSharp/omnisharp-roslyn.git
+cd omnisharp-roslyn
+./build.sh
+```
+
+
 ```bash
 mkdir ~/.dotnet
 ```
