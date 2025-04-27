@@ -1,12 +1,11 @@
 ## Dotnet and Angular CLI Cheat Sheet
 
-### Install dotnet with differents version on Linux , exaple with 6 and 8 version
-
 ## Warning just if on Linux or mac show errors with omnisharp on NeoVim/LazyVim
 ```bash
 sudo apt update
 sudo apt install mono-complete
 ```
+Or on Mac
 ```bash
 brew install mono
 ```
@@ -17,6 +16,7 @@ cd omnisharp-roslyn
 ./build.sh
 ```
 
+### Install dotnet with differents version on Linux , exaple with 6 and 8 version
 
 ```bash
 mkdir ~/.dotnet
