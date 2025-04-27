@@ -397,6 +397,9 @@ npm uninstall -g @angular/cli
 npm install -g @angular/cli@14
 ```
 ```bash
+npm install -g @angular/cli@13.3.0
+```
+```bash
 npm install -g @angular/cli
 ```
 - For specific verion use
