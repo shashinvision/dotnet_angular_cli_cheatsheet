@@ -47,6 +47,21 @@ or
 source ~/.bashrc
 ```
 
+ ### If you have a trouble with your certs on Linux use this
+
+in your .zshrc or bashrc put this, that use the major version of dotnet, example if you use 6 and 8 of SDKs versions
+```bash
+export DOTNET_ROLL_FORWARD=Major
+```
+
+```bash
+dotnet tool update -g linux-dev-certs
+dotnet linux-dev-certs install
+
+dotnet dev-certs https --clean
+dotnet dev-certs https --trust
+```
+
 ### Example Project Setup with DOTNET 8.03
 
 ```bash
