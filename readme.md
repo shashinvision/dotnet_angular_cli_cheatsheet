@@ -498,6 +498,16 @@ mkcert localhost
 }
 ```
 
+- Con certificados autofirmados de Angular:
+```bash
+ng serve --ssl
+```
+- Con configuración específica:
+
+```bash
+ng serve --ssl --host localhost --port 4200
+```
+
 - Interceptor 
 ```bash
 ng g interceptor [name]
