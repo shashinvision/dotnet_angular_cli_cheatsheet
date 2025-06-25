@@ -417,8 +417,6 @@ Source: https://docs.servicestack.net/jupyter-notebooks-csharp#generate-c-jupyte
 
 ## Test en Dotnet 
 
-{
-
 ## 🚀 Setup Inicial
 
 ### Crear proyecto de pruebas
