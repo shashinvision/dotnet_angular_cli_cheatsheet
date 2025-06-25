@@ -854,7 +854,7 @@ npm cache clean --force
 ng cache clean
 
 # Reset node_modules
-rm -rf node_modules package-lock.json
+rm -rfv node_modules package-lock.json
 npm install
 
 # Fix permissions (macOS/Linux)
