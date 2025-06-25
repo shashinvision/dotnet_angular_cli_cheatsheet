@@ -415,6 +415,651 @@ Saved to: techstacks.io-FindTechStacks.ipynb
 Source: https://docs.servicestack.net/jupyter-notebooks-csharp#generate-c-jupyter-notebooks
 
 
+## Test en Dotnet 
+
+{
+  `path`: `UNIT_TESTING.md`,
+  `content`: `# 📝 Unit Testing en .NET - Guía Completa
+
+## 🚀 Setup Inicial
+
+### Crear proyecto de pruebas
+```bash
+# Crear proyecto de pruebas xUnit
+dotnet new xunit -n MiApp.Tests
+
+# Crear proyecto de pruebas NUnit
+dotnet new nunit -n MiApp.Tests
+
+# Crear proyecto de pruebas MSTest
+dotnet new mstest -n MiApp.Tests
+
+# Agregar referencia al proyecto principal
+dotnet add MiApp.Tests reference MiApp/MiApp.csproj
+
+# Restaurar dependencias
+dotnet restore
+```
+
+### Estructura de carpetas recomendada
+```
+MiSolucion/
+├── src/
+│   └── MiApp/
+├── tests/
+│   ├── MiApp.UnitTests/
+│   ├── MiApp.IntegrationTests/
+│   └── MiApp.AcceptanceTests/
+└── MiSolucion.sln
+```
+
+## 🧪 Frameworks de Testing
+
+### xUnit (Recomendado)
+```xml
+<PackageReference Include=\"Microsoft.NET.Test.Sdk\" Version=\"17.8.0\" />
+<PackageReference Include=\"xunit\" Version=\"2.4.2\" />
+<PackageReference Include=\"xunit.runner.visualstudio\" Version=\"2.4.5\" />
+<PackageReference Include=\"Moq\" Version=\"4.20.69\" />
+<PackageReference Include=\"FluentAssertions\" Version=\"6.12.0\" />
+```
+
+### NUnit
+```xml
+<PackageReference Include=\"Microsoft.NET.Test.Sdk\" Version=\"17.8.0\" />
+<PackageReference Include=\"NUnit\" Version=\"3.14.0\" />
+<PackageReference Include=\"NUnit3TestAdapter\" Version=\"4.5.0\" />
+```
+
+### MSTest
+```xml
+<PackageReference Include=\"Microsoft.NET.Test.Sdk\" Version=\"17.8.0\" />
+<PackageReference Include=\"MSTest.TestFramework\" Version=\"3.1.1\" />
+<PackageReference Include=\"MSTest.TestAdapter\" Version=\"3.1.1\" />
+```
+
+## 📚 Conceptos Fundamentales
+
+### Patrón AAA (Arrange, Act, Assert)
+```csharp
+[Test]
+public void DeberiaCalcularElTotalCorrectamente()
+{
+    // Arrange - Preparar datos y dependencias
+    var calculadora = new Calculadora();
+    var numero1 = 5;
+    var numero2 = 3;
+    
+    // Act - Ejecutar la acción que queremos probar
+    var resultado = calculadora.Sumar(numero1, numero2);
+    
+    // Assert - Verificar el resultado
+    Assert.Equal(8, resultado);
+}
+```
+
+### Convención de nombres
+```csharp
+// Patrón: MetodoQuePrueba_Escenario_ResultadoEsperado
+[Test]
+public void Sumar_ConDosNumerosPositivos_DeberiaRetornarLaSuma() { }
+
+[Test]
+public void Dividir_PorCero_DeberiaLanzarExcepcion() { }
+
+[Test]
+public void ObtenerUsuario_UsuarioNoExiste_DeberiaRetornarNull() { }
+```
+
+## 🎯 Ejemplos Prácticos
+
+### 1. Testing de Clase Simple
+```csharp
+// Clase a testear
+public class Calculadora
+{
+    public int Sumar(int a, int b) => a + b;
+    
+    public double Dividir(double a, double b)
+    {
+        if (b == 0) throw new DivideByZeroException();
+        return a / b;
+    }
+    
+    public bool EsPar(int numero) => numero % 2 == 0;
+}
+
+// Tests
+public class CalculadoraTests
+{
+    private readonly Calculadora _calculadora;
+    
+    public CalculadoraTests()
+    {
+        _calculadora = new Calculadora();
+    }
+    
+    [Fact]
+    public void Sumar_ConDosNumerosPositivos_DeberiaRetornarLaSuma()
+    {
+        // Arrange
+        var a = 5;
+        var b = 3;
+        
+        // Act
+        var resultado = _calculadora.Sumar(a, b);
+        
+        // Assert
+        resultado.Should().Be(8);
+    }
+    
+    [Theory]
+    [InlineData(4, true)]
+    [InlineData(5, false)]
+    [InlineData(0, true)]
+    [InlineData(-2, true)]
+    public void EsPar_ConDiferentesNumeros_DeberiaRetornarResultadoCorrecto(int numero, bool esperado)
+    {
+        // Act
+        var resultado = _calculadora.EsPar(numero);
+        
+        // Assert
+        resultado.Should().Be(esperado);
+    }
+    
+    [Fact]
+    public void Dividir_PorCero_DeberiaLanzarExcepcion()
+    {
+        // Arrange
+        var a = 10.0;
+        var b = 0.0;
+        
+        // Act & Assert
+        Action action = () => _calculadora.Dividir(a, b);
+        action.Should().Throw<DivideByZeroException>();
+    }
+}
+```
+
+### 2. Testing con Mocks (Moq)
+```csharp
+// Interfaces y servicios
+public interface IRepositorioUsuario
+{
+    Usuario ObtenerPorId(int id);
+    void Guardar(Usuario usuario);
+}
+
+public class ServicioUsuario
+{
+    private readonly IRepositorioUsuario _repositorio;
+    
+    public ServicioUsuario(IRepositorioUsuario repositorio)
+    {
+        _repositorio = repositorio;
+    }
+    
+    public bool ActivarUsuario(int usuarioId)
+    {
+        var usuario = _repositorio.ObtenerPorId(usuarioId);
+        if (usuario == null) return false;
+        
+        usuario.Activo = true;
+        _repositorio.Guardar(usuario);
+        return true;
+    }
+}
+
+// Tests con Mocks
+public class ServicioUsuarioTests
+{
+    private readonly Mock<IRepositorioUsuario> _mockRepositorio;
+    private readonly ServicioUsuario _servicio;
+    
+    public ServicioUsuarioTests()
+    {
+        _mockRepositorio = new Mock<IRepositorioUsuario>();
+        _servicio = new ServicioUsuario(_mockRepositorio.Object);
+    }
+    
+    [Fact]
+    public void ActivarUsuario_UsuarioExiste_DeberiaActivarYRetornarTrue()
+    {
+        // Arrange
+        var usuarioId = 1;
+        var usuario = new Usuario { Id = usuarioId, Activo = false };
+        
+        _mockRepositorio.Setup(r => r.ObtenerPorId(usuarioId))
+                       .Returns(usuario);
+        
+        // Act
+        var resultado = _servicio.ActivarUsuario(usuarioId);
+        
+        // Assert
+        resultado.Should().BeTrue();
+        usuario.Activo.Should().BeTrue();
+        _mockRepositorio.Verify(r => r.Guardar(usuario), Times.Once);
+    }
+    
+    [Fact]
+    public void ActivarUsuario_UsuarioNoExiste_DeberiaRetornarFalse()
+    {
+        // Arrange
+        var usuarioId = 999;
+        _mockRepositorio.Setup(r => r.ObtenerPorId(usuarioId))
+                       .Returns((Usuario)null);
+        
+        // Act
+        var resultado = _servicio.ActivarUsuario(usuarioId);
+        
+        // Assert
+        resultado.Should().BeFalse();
+        _mockRepositorio.Verify(r => r.Guardar(It.IsAny<Usuario>()), Times.Never);
+    }
+}
+```
+
+### 3. Testing Asíncrono
+```csharp
+// Servicio asíncrono
+public class ServicioApiExterna
+{
+    private readonly HttpClient _httpClient;
+    
+    public ServicioApiExterna(HttpClient httpClient)
+    {
+        _httpClient = httpClient;
+    }
+    
+    public async Task<string> ObtenerDatosAsync(string endpoint)
+    {
+        var response = await _httpClient.GetAsync(endpoint);
+        response.EnsureSuccessStatusCode();
+        return await response.Content.ReadAsStringAsync();
+    }
+}
+
+// Tests asíncronos
+public class ServicioApiExternaTests
+{
+    private readonly Mock<HttpMessageHandler> _mockHandler;
+    private readonly HttpClient _httpClient;
+    private readonly ServicioApiExterna _servicio;
+    
+    public ServicioApiExternaTests()
+    {
+        _mockHandler = new Mock<HttpMessageHandler>();
+        _httpClient = new HttpClient(_mockHandler.Object);
+        _servicio = new ServicioApiExterna(_httpClient);
+    }
+    
+    [Fact]
+    public async Task ObtenerDatos_RespuestaExitosa_DeberiaRetornarContenido()
+    {
+        // Arrange
+        var endpoint = \"/api/datos\";
+        var contenidoEsperado = \"datos de prueba\";
+        
+        _mockHandler.Setup(h => h.SendAsync(
+            It.Is<HttpRequestMessage>(req => req.RequestUri.ToString().Contains(endpoint)),
+            It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new HttpResponseMessage
+            {
+                StatusCode = HttpStatusCode.OK,
+                Content = new StringContent(contenidoEsperado)
+            });
+        
+        // Act
+        var resultado = await _servicio.ObtenerDatosAsync(endpoint);
+        
+        // Assert
+        resultado.Should().Be(contenidoEsperado);
+    }
+}
+```
+
+### 4. Testing de Controllers (ASP.NET Core)
+```csharp
+[ApiController]
+[Route(\"api/[controller]\")]
+public class UsuariosController : ControllerBase
+{
+    private readonly IServicioUsuario _servicioUsuario;
+    
+    public UsuariosController(IServicioUsuario servicioUsuario)
+    {
+        _servicioUsuario = servicioUsuario;
+    }
+    
+    [HttpGet(\"{id}\")]
+    public async Task<IActionResult> ObtenerUsuario(int id)
+    {
+        var usuario = await _servicioUsuario.ObtenerPorIdAsync(id);
+        if (usuario == null) return NotFound();
+        
+        return Ok(usuario);
+    }
+    
+    [HttpPost]
+    public async Task<IActionResult> CrearUsuario([FromBody] CrearUsuarioRequest request)
+    {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+        
+        var usuario = await _servicioUsuario.CrearAsync(request);
+        return CreatedAtAction(nameof(ObtenerUsuario), new { id = usuario.Id }, usuario);
+    }
+}
+
+// Tests del Controller
+public class UsuariosControllerTests
+{
+    private readonly Mock<IServicioUsuario> _mockServicio;
+    private readonly UsuariosController _controller;
+    
+    public UsuariosControllerTests()
+    {
+        _mockServicio = new Mock<IServicioUsuario>();
+        _controller = new UsuariosController(_mockServicio.Object);
+    }
+    
+    [Fact]
+    public async Task ObtenerUsuario_UsuarioExiste_DeberiaRetornarOk()
+    {
+        // Arrange
+        var usuarioId = 1;
+        var usuario = new Usuario { Id = usuarioId, Nombre = \"Juan\" };
+        
+        _mockServicio.Setup(s => s.ObtenerPorIdAsync(usuarioId))
+                    .ReturnsAsync(usuario);
+        
+        // Act
+        var resultado = await _controller.ObtenerUsuario(usuarioId);
+        
+        // Assert
+        var okResult = resultado.Should().BeOfType<OkObjectResult>().Subject;
+        okResult.Value.Should().Be(usuario);
+    }
+    
+    [Fact]
+    public async Task ObtenerUsuario_UsuarioNoExiste_DeberiaRetornarNotFound()
+    {
+        // Arrange
+        var usuarioId = 999;
+        _mockServicio.Setup(s => s.ObtenerPorIdAsync(usuarioId))
+                    .ReturnsAsync((Usuario)null);
+        
+        // Act
+        var resultado = await _controller.ObtenerUsuario(usuarioId);
+        
+        // Assert
+        resultado.Should().BeOfType<NotFoundResult>();
+    }
+    
+    [Fact]
+    public async Task CrearUsuario_ModeloInvalido_DeberiaRetornarBadRequest()
+    {
+        // Arrange
+        _controller.ModelState.AddModelError(\"Nombre\", \"El nombre es requerido\");
+        var request = new CrearUsuarioRequest();
+        
+        // Act
+        var resultado = await _controller.CrearUsuario(request);
+        
+        // Assert
+        resultado.Should().BeOfType<BadRequestObjectResult>();
+    }
+}
+```
+
+## 🛠️ Herramientas y Utilidades
+
+### FluentAssertions
+```csharp
+// En lugar de Assert.Equal
+resultado.Should().Be(valorEsperado);
+
+// Para colecciones
+lista.Should().HaveCount(3)
+     .And.Contain(x => x.Nombre == \"Juan\")
+     .And.NotContain(x => x.Activo == false);
+
+// Para excepciones
+Action action = () => metodo.EjecutarAlgo();
+action.Should().Throw<InvalidOperationException>()
+      .WithMessage(\"Mensaje específico\");
+
+// Para objetos
+usuario.Should().BeEquivalentTo(usuarioEsperado, options => 
+    options.Excluding(x => x.Id));
+```
+
+### AutoFixture (Generación de datos de prueba)
+```csharp
+public class UsuarioTestsConAutoFixture
+{
+    private readonly IFixture _fixture;
+    
+    public UsuarioTestsConAutoFixture()
+    {
+        _fixture = new Fixture();
+    }
+    
+    [Fact]
+    public void CrearUsuario_ConDatosValidos_DeberiaCrearCorrectamente()
+    {
+        // Arrange
+        var usuario = _fixture.Create<Usuario>();
+        var request = _fixture.Build<CrearUsuarioRequest>()
+                             .With(x => x.Email, \"test@ejemplo.com\")
+                             .Create();
+        
+        // Act & Assert...
+    }
+}
+```
+
+## 🎯 Comandos Útiles
+
+### Ejecutar tests
+```bash
+# Ejecutar todos los tests
+dotnet test
+
+# Ejecutar tests de un proyecto específico
+dotnet test MiApp.Tests/
+
+# Ejecutar tests con cobertura
+dotnet test --collect:\"XPlat Code Coverage\"
+
+# Ejecutar solo tests que contengan un nombre específico
+dotnet test --filter \"UsuarioTests\"
+
+# Ejecutar tests de una clase específica
+dotnet test --filter \"FullyQualifiedName~MiApp.Tests.UsuarioTests\"
+
+# Ejecutar tests con verbosidad detallada
+dotnet test --verbosity detailed
+
+# Generar reporte de cobertura HTML
+dotnet tool install -g dotnet-reportgenerator-globaltool
+reportgenerator -reports:\"coverage.cobertura.xml\" -targetdir:\"coveragereport\" -reporttypes:Html
+```
+
+### Configuración de coverage
+```xml
+<!-- En el .csproj del proyecto de tests -->
+<PropertyGroup>
+  <CollectCoverage>true</CollectCoverage>
+  <CoverletOutputFormat>cobertura</CoverletOutputFormat>
+  <CoverletOutput>./coverage/</CoverletOutput>
+  <ExcludeByFile>**/Migrations/**</ExcludeByFile>
+  <Exclude>[*]*.Program,[*]*.Startup</Exclude>
+</PropertyGroup>
+```
+
+## 🏗️ Patrones y Mejores Prácticas
+
+### Test Builders
+```csharp
+public class UsuarioBuilder
+{
+    private Usuario _usuario = new Usuario();
+    
+    public UsuarioBuilder ConNombre(string nombre)
+    {
+        _usuario.Nombre = nombre;
+        return this;
+    }
+    
+    public UsuarioBuilder ConEmail(string email)
+    {
+        _usuario.Email = email;
+        return this;
+    }
+    
+    public UsuarioBuilder Activo()
+    {
+        _usuario.Activo = true;
+        return this;
+    }
+    
+    public Usuario Build() => _usuario;
+}
+
+// Uso en tests
+[Fact]
+public void Test_ConBuilder()
+{
+    var usuario = new UsuarioBuilder()
+        .ConNombre(\"Juan\")
+        .ConEmail(\"juan@test.com\")
+        .Activo()
+        .Build();
+    
+    // Test...
+}
+```
+
+### Object Mother
+```csharp
+public static class UsuarioMother
+{
+    public static Usuario UsuarioBasico() => new Usuario
+    {
+        Id = 1,
+        Nombre = \"Usuario Test\",
+        Email = \"test@ejemplo.com\",
+        Activo = true
+    };
+    
+    public static Usuario UsuarioInactivo() => UsuarioBasico() with { Activo = false };
+    
+    public static Usuario UsuarioConEmail(string email) => UsuarioBasico() with { Email = email };
+}
+```
+
+### Setup común con IClassFixture
+```csharp
+public class DatabaseFixture : IDisposable
+{
+    public IServiceProvider ServiceProvider { get; private set; }
+    
+    public DatabaseFixture()
+    {
+        var services = new ServiceCollection();
+        services.AddDbContext<AppDbContext>(options =>
+            options.UseInMemoryDatabase(Guid.NewGuid().ToString()));
+        
+        ServiceProvider = services.BuildServiceProvider();
+    }
+    
+    public void Dispose()
+    {
+        ServiceProvider?.Dispose();
+    }
+}
+
+[Collection(\"Database\")]
+public class IntegrationTests : IClassFixture<DatabaseFixture>
+{
+    private readonly DatabaseFixture _fixture;
+    
+    public IntegrationTests(DatabaseFixture fixture)
+    {
+        _fixture = fixture;
+    }
+    
+    // Tests...
+}
+```
+
+## 🚨 Qué NO hacer
+
+### ❌ Tests frágiles
+```csharp
+// MAL - Depende del estado global
+[Fact]
+public void Test_Malo()
+{
+    DateTime.Now.Should().Be(new DateTime(2023, 1, 1)); // Se rompe siempre
+}
+
+// BIEN - Mockear dependencias externas
+[Fact]
+public void Test_Bueno()
+{
+    var mockDateTime = new Mock<IDateTimeProvider>();
+    mockDateTime.Setup(x => x.Now).Returns(new DateTime(2023, 1, 1));
+    // ...
+}
+```
+
+### ❌ Tests que testean implementación
+```csharp
+// MAL - Testa implementación interna
+[Fact]
+public void Test_Malo()
+{
+    _mockRepo.Verify(x => x.Connection.Open(), Times.Once);
+}
+
+// BIEN - Testa comportamiento
+[Fact]
+public void Test_Bueno()
+{
+    var resultado = _servicio.ObtenerUsuarios();
+    resultado.Should().HaveCount(3);
+}
+```
+
+## 🎯 Tips Finales
+
+1. **Un test, un concepto**: Cada test debe verificar una sola cosa
+2. **Nombres descriptivos**: El nombre del test debe explicar qué se está probando
+3. **Independencia**: Los tests no deben depender entre sí
+4. **Rápidos**: Los unit tests deben ejecutarse rápido
+5. **Determinísticos**: Mismo input, mismo output siempre
+6. **Tests como documentación**: Los tests deben explicar cómo usar el código
+
+¡Dale que con esto tenés una base sólida para testear en .NET! 🚀
+
+---
+
+## 🔗 Recursos Adicionales
+
+- [Documentación oficial de .NET Testing](https://docs.microsoft.com/en-us/dotnet/core/testing/)
+- [xUnit Documentation](https://xunit.net/)
+- [Moq Documentation](https://github.com/moq/moq4)
+- [FluentAssertions Documentation](https://fluentassertions.com/)
+- [AutoFixture Documentation](https://github.com/AutoFixture/AutoFixture)
+
+---
+
+*Esta guía es parte del [Dotnet Angular CLI Cheat Sheet](https://github.com/shashinvision/dotnet_angular_cli_cheatsheet) - Un recurso completo para desarrolladores full stack.*
+`
+}
+
+
 ## Angular CLI 
 - Install Current Angular CLI 
 ```bash
