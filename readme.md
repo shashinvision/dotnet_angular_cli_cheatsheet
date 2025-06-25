@@ -306,7 +306,7 @@ dotnet ef database update --environment Production
 <PackageReference Include="coverlet.collector" Version="3.2.0" />
 ```
 
-# xUnit/nUnit packages
+# xUnit/NUnit packages
 ```xml
 dotnet add package xunit
 dotnet add package xunit.runner.visualstudio
