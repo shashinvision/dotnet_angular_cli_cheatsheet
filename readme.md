@@ -298,6 +298,33 @@ dotnet ef database update --environment Production
 <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.0" />
 ```
 
+#### NUnit (Alternative)
+```xml
+<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+<PackageReference Include="NUnit" Version="3.13.3" />
+<PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
+<PackageReference Include="coverlet.collector" Version="3.2.0" />
+```
+
+# xUnit packages
+```xml
+dotnet add package xunit
+dotnet add package xunit.runner.visualstudio
+```
+```xml
+# NUnit packages
+dotnet add package NUnit
+dotnet add package NUnit3TestAdapter
+dotnet add package Microsoft.NET.Test.Sdk
+```
+```xml
+# Shared packages
+dotnet add package Moq
+dotnet add package FluentAssertions
+dotnet add package AutoFixture
+dotnet add package Microsoft.EntityFrameworkCore.InMemory
+```
+
 #### Essential Testing Packages
 ```bash
 # Add testing packages
@@ -310,6 +337,43 @@ dotnet add package Microsoft.EntityFrameworkCore.InMemory
 ```
 
 ### Testing Patterns and Examples
+
+### NUnit Basic Test Example
+
+```csharp
+[TestFixture]
+public class CalculatorTests
+{
+    private Calculator _calculator;
+
+    [SetUp]
+    public void Setup()
+    {
+        _calculator = new Calculator();
+    }
+
+    [Test]
+    public void Add_ShouldReturnSum()
+    {
+        var result = _calculator.Add(2, 3);
+        Assert.AreEqual(5, result);
+    }
+
+    [TestCase(4, true)]
+    [TestCase(5, false)]
+    public void IsEven_ShouldReturnExpectedResult(int number, bool expected)
+    {
+        var result = _calculator.IsEven(number);
+        Assert.That(result, Is.EqualTo(expected));
+    }
+
+    [Test]
+    public void Divide_ByZero_ShouldThrow()
+    {
+        Assert.Throws<DivideByZeroException>(() => _calculator.Divide(10, 0));
+    }
+}
+```
 
 #### Basic Unit Test Structure
 ```csharp
@@ -431,6 +495,9 @@ public class UsersControllerIntegrationTests : IClassFixture<WebApplicationFacto
 # Run all tests
 dotnet test
 
+# Run tests with specific framework
+dotnet test --framework net8.0
+
 # Run tests with detailed output
 dotnet test --verbosity detailed
 
@@ -439,6 +506,9 @@ dotnet test MyApp.Tests/
 
 # Filter tests by name
 dotnet test --filter "UserServiceTests"
+
+# Filter NUnit tests
+dotnet test --filter "FullyQualifiedName~CalculatorTests"
 
 # Run tests with code coverage
 dotnet test --collect:"XPlat Code Coverage"
