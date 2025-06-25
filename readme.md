@@ -1,1186 +1,876 @@
-## Dotnet and Angular CLI Cheat Sheet
+# .NET and Angular CLI Cheat Sheet
 
-## Warning just if on Linux or mac show errors with omnisharp on NeoVim/LazyVim
+A comprehensive guide for full-stack developers working with .NET and Angular. This cheat sheet covers everything from initial setup to advanced testing strategies.
+
+## Table of Contents
+- [.NET Core Setup](#net-core-setup)
+- [.NET CLI Commands](#net-cli-commands)
+- [Entity Framework Core](#entity-framework-core)
+- [.NET Testing Guide](#net-testing-guide)
+- [Angular CLI](#angular-cli)
+- [Development Tools](#development-tools)
+
+---
+
+## .NET Core Setup
+
+### Linux/Mac Development Environment
+
+#### Fix OmniSharp Issues (Linux/Mac)
 ```bash
+# Ubuntu/Debian
 sudo apt update
 sudo apt install mono-complete
-```
-Or on Mac
-```bash
+
+# macOS
 brew install mono
-```
-```bash
-# Download the latest version of omnisharp-roslyn
+
+# Manual OmniSharp installation
 git clone https://github.com/OmniSharp/omnisharp-roslyn.git
 cd omnisharp-roslyn
 ./build.sh
 ```
 
-### Install dotnet with differents version on Linux , exaple with 6 and 8 version
+#### Multiple .NET SDK Versions Setup
 
 ```bash
+# Create dotnet directory
 mkdir ~/.dotnet
-```
-```bash
+
+# Download and install .NET 8
 wget https://builds.dotnet.microsoft.com/dotnet/Sdk/8.0.408/dotnet-sdk-8.0.408-linux-x64.tar.gz
 tar -zxf dotnet-sdk-8.0.408-linux-x64.tar.gz -C ~/.dotnet
-```
 
-```bash
+# Download and install .NET 6
 wget https://builds.dotnet.microsoft.com/dotnet/Sdk/6.0.425/dotnet-sdk-6.0.425-linux-x64.tar.gz
 tar -zxf dotnet-sdk-6.0.425-linux-x64.tar.gz -C ~/.dotnet
-```
-```bash
+
+# Verify installations
 dotnet --list-sdks
 ```
-In yout .zshrc or .bashrc put this
-```
+
+#### Environment Configuration
+
+Add to your `.zshrc` or `.bashrc`:
+```bash
 export DOTNET_ROOT=$HOME/.dotnet
 export PATH=$HOME/.dotnet:$PATH
-```
-Next put this on your terminal to reload the config 
-```
-source ~/.zshrc
-```
-or
-```
-source ~/.bashrc
+export DOTNET_ROLL_FORWARD=Major  # Use latest major version
 ```
 
- ### If you have a trouble with your certs on Linux use this
-
-in your .zshrc or bashrc put this, that use the major version of dotnet, example if you use 6 and 8 of SDKs versions
+Reload configuration:
 ```bash
-export DOTNET_ROLL_FORWARD=Major
+source ~/.zshrc  # or source ~/.bashrc
 ```
+
+#### SSL Certificate Issues (Linux)
 
 ```bash
+# Install and configure dev certificates
 dotnet tool update -g linux-dev-certs
 dotnet linux-dev-certs install
 
+# Clean and recreate certificates
 dotnet dev-certs https --clean
 dotnet dev-certs https --trust
 ```
 
-### Example Project Setup with DOTNET 8.03
+---
 
+## .NET CLI Commands
+
+### Project Creation and Management
+
+#### Basic Project Setup
 ```bash
+# Create solution directory
+mkdir MyApp && cd MyApp
 
-mkdir DatingApp   
-cd DatingApp  
+# Create solution file
+dotnet new sln -n MyApp
 
-# Create a new solution file in the current directory. This command initializes a new .NET solution file (.sln) that will contain one or more projects.
-dotnet new sln -n API
+# Create Web API project
+dotnet new webapi -controllers -n MyApp.Api
 
-# Create a new Web API project named API with controllers. This command generates a new Web API project with the specified name API and includes support for controllers.
-dotnet new webapi -controllers -n API    
+# Add project to solution
+dotnet sln add MyApp.Api/MyApp.Api.csproj
 
-# List all projects in the solution. This command shows all the projects that are currently included in the solution file.
-dotnet sln list 
-
-# Add the API project to the solution. This command includes the API project into the solution file, allowing it to be managed and built as part of the solution.
-dotnet sln API.sln add API/API.csproj
-
+# Verify solution structure
 dotnet sln list
-
-
-# Build and run the API project. This command compiles and executes the API project, starting the Web API application.
-dotnet run
-
-# Run the project and watch for file changes. This command runs the project and automatically restarts it if any source files are modified, which is useful for development and debugging.
-
-dotnet watch
-# Or watch --no-hot-reload
-dotnet watch --no-hot-reload
-```
-### Commands
-
-- Create a new .NET project.
-```bash
-dotnet new
 ```
 
-- List new command options. The Short Name column has templates to use. Example:
+#### Multi-Project Solution Setup
 ```bash
-dotnet new webapi -controllers -n API
+# Create organized solution structure
+dotnet new sln -n MyApp
+
+mkdir MyApp.Api
+mkdir MyApp.Core
+mkdir MyApp.Infrastructure
+mkdir MyApp.Tests
+mkdir MyApp.IntegrationTests
+
+# Create projects
+cd MyApp.Api && dotnet new webapi && cd ..
+cd MyApp.Core && dotnet new classlib && cd ..
+cd MyApp.Infrastructure && dotnet new classlib && cd ..
+cd MyApp.Tests && dotnet new xunit && cd ..
+cd MyApp.IntegrationTests && dotnet new xunit && cd ..
+
+# Add projects to solution
+dotnet sln add MyApp.Api/MyApp.Api.csproj
+dotnet sln add MyApp.Core/MyApp.Core.csproj
+dotnet sln add MyApp.Infrastructure/MyApp.Infrastructure.csproj
+dotnet sln add MyApp.Tests/MyApp.Tests.csproj
+dotnet sln add MyApp.IntegrationTests/MyApp.IntegrationTests.csproj
+
+# Add project references
+cd MyApp.Api && dotnet add reference ../MyApp.Core/MyApp.Core.csproj && cd ..
+cd MyApp.Infrastructure && dotnet add reference ../MyApp.Core/MyApp.Core.csproj && cd ..
+cd MyApp.Tests && dotnet add reference ../MyApp.Core/MyApp.Core.csproj && cd ..
 ```
 
-- Restore dependencies specified in the project.
-```bash
-dotnet restore
-```
+### Essential CLI Commands
 
-- Build a project and all of its dependencies.
+#### Project Operations
 ```bash
-dotnet build
-```
-
-- Build and run a project.
-```bash
-dotnet run
-```
-- Build and run a project on specific/different port.
-
-```bash
-dotnet run --urls "http://127.0.0.1:<new-port>"
-```
-
-- Run unit tests using a test runner specified in the project.
-```bash
-dotnet test
-```
-
-- Entity Framework Core command-line tools.
-```bash
-dotnet ef
-```
-
-- .NET Core global tools command-line.
-```bash
-dotnet tool
-```
-
-- Clean the output of a project.
-```bash
-dotnet clean
-```
-- Use [NuGet](https://www.nuget.org/).
-- NuGet command-line.
-```bash
-dotnet nuget
-```
-- Create a NuGet package.
-```bash
-dotnet pack
-```
-
-- Publish a .NET project.
-```bash
-dotnet publish
-```
-
-- Migrate a project from project.json to csproj.
-```bash
-dotnet migrate
-```
-
-- Modify solution (SLN) files.
-```bash
-dotnet sln
-```
-
-
-- List all available project templates.
-```bash
+# List available templates
 dotnet new --list
-```
 
-- Display help information for a command.
-```bash
-dotnet help
-```
+# Create projects with specific templates
+dotnet new webapi -controllers -n MyApi
+dotnet new classlib -n MyLibrary
+dotnet new console -n MyConsoleApp
 
-- Display information about the installed .NET Core SDK.
-```bash
-dotnet --info
-```
-
-- Create/Recreate certs.
-```bash
-dotnet dev-certs https
-```
-
-- Trust certs.
-```bash
-dotnet dev-certs https --trust
-```
-
-- Clean certs.
-```bash
-dotnet dev-certs https --clean
-```
-
-- Entity Framework Core .NET Command-line Tools 8.0.3, with dotnet-ef tool.
-```bash
-dotnet tool list -g
-```
-
-- Install dotnet-ef. Ensure it is the same version as your dotnet.
-```bash
-dotnet tool install --global dotnet-ef --version 8.0.3
-```
-
-
-- To view a help page of migrations.
-```bash
-dotnet ef migrations -h
-```
-
-- To use.
-```bash
-dotnet ef
-```
-
-- To create a InitialCreate Migration and Path, remember to use `cd API` before.
-```bash
-dotnet ef migrations add InitialCreate -o Data/Migrations
-```
-- To Next migrations just need add the name  
-```bash
-dotnet ef migrations add UserEntityUpdated
-```
-- To undo this action
-```bash
-dotnet ef migrations remove
-```
-
-- To see the help options on databases.
-```bash
-dotnet ef database -h
-```
-
-- To activate migrations.
-```bash
-dotnet ef database update
-```
-
-- To delete/drop database
-```bash
-dotnet ef database drop
-```
-
-- To uninstall dotnet-ef.
-```bash
-dotnet tool uninstall --global dotnet-ef
-```
-
-- To create a .gitignore template file.
-```bash
-dotnet new gitignore
-```
-
-### Help Examples
-- General help.
-```bash
-dotnet -h
-```
-
-- Help for webapi.
-```bash
-dotnet new webapi -h
-```
-
-- Help for subcommand webapi. Example usage: `dotnet new webapi -controllers -n API`
-```bash
-dotnet new webapi -controllers -h
-```
-- ADD New package
-```bash
-dotnet add package Microsoft.AspNetCore.Authentication.JwtBearer
-```
-- Watch with no hot reaload
-```bash
- dotnet watch --no-hot-reload
-```
-
-**WORK With differents SDK versions**
-
-- List of vesions of SDK
-```bash
-dotnet --list-sdks
-```
-```bash
-dotnet --version
-```
-
-When we install each dotnet core SDK on OS, the each project can use SDKs version separately. Because the SDK have global installation. We can configuration each project settings by create global.json via this command:
-```bash
-dotnet new globaljson --force
-```
-- Edit the version from dotnet --list-sdks
-```bash
-vim global.json
-```
-
-and finally selected the correct version.
-
-The process for selecting an SDK version is:
-
-dotnet searches for a **global.json** file iteratively reverse-navigating the path upward from the current working directory.
-dotnet uses the SDK specified in the first **global.json** found.
-dotnet uses the latest installed SDK if no **lobal.json** is found.
-
-References: https://learn.microsoft.com/en-us/dotnet/core/tools/global-json?tabs=netcore3x#globaljson-and-the-net-core-cli
-
-Step-by-Step: https://stackoverflow.com/a/42078060/14557383
-
-
-## Example usin dotnet CLI with in version 6 usin differents versions on global.json
-```bash
-dotnet new webapi -n Api --no-https 
-```
-
-## Example usin dotnet CLI with in version 8 and controllers template
-```bash
-dotnet new webapi -controllers -n Api
-```
-## Example Create a Manual Solution file 
-```bash
-dotnet new sln -n Api
-
-mkdir Api.Api
-mkdir Api.Tests
-mkdir Api.IntegrationTests
-
-cd Api.Api
-dotnet new webapi
-cd ..
-
-cd Api.Tests
-dotnet new xunit
-cd ..
-
-cd Api.IntegrationTests
-dotnet new xunit
-cd ..
-```
-
-```bash
-dotnet sln Api.sln add Api.Api/Api.Api.csproj
-dotnet sln Api.sln add Api.Tests/Api.Tests.csproj
-dotnet sln Api.sln add Api.IntegrationTests/Api.IntegrationTests.csproj
-
-cd Api.Tests
-dotnet add reference ../Api.Api/Api.Api.csproj
-cd ..
-
-cd Api.IntegrationTests
-dotnet add reference ../Api.Api/Api.Api.csproj
-cd ..
-```
-
-
-![dotnet_versions](./files/dotnet_versions.png)
-
-
-# Jupyter Notebooks with .NET and C#
-
-![jupyter NET](./files/Jupyter%20NET.jpg)
-![jupyter NET VSCODE](./files/Jupyter%20NET%20VSCODE.jpg)
-
-### Setup Jupyter for C# locally
-
-- Latest dotnet 5.0+ SDK
-- Python 3.7+ with pip
-### Install jupyterlab to default Python interpreter
-```bash
-pip install jupyterlab
-```
-### Install Dotnet Interactive dotnet tool
-
-```bash
-dotnet tool install -g Microsoft.dotnet-interactive
-```
-### Get Dotnet Interactive to register kernels with Jupyter  
-
-```bash
-dotnet interactive jupyter install
-```
-```bash
-jupyter kernelspec list
-```
-```bash
-jupyter lab build   
-```
-```bash
-jupyter-lab
-```
-
-## Alternative using X Tool on NET CLI 
-```bash
-dotnet tool install --global x
-```
-```bash
-dotnet tool update -g x
-```
-```bash
-x jupyter-csharp
-```
-```bash
-x jupyter-csharp <a href="https://techstacks.io">https://techstacks.io</a> FindTechStacks "{Ids:[1,2,3],VendorName:'Google',Take:5}"
-```
-### Output example: 
-Saved to: techstacks.io-FindTechStacks.ipynb
-
-Source: https://docs.servicestack.net/jupyter-notebooks-csharp#generate-c-jupyter-notebooks
-
-
-## Test en Dotnet 
-
-## 🚀 Setup Inicial
-
-### Crear proyecto de pruebas
-```bash
-# Crear proyecto de pruebas xUnit
-dotnet new xunit -n MiApp.Tests
-
-# Crear proyecto de pruebas NUnit
-dotnet new nunit -n MiApp.Tests
-
-# Crear proyecto de pruebas MSTest
-dotnet new mstest -n MiApp.Tests
-
-# Agregar referencia al proyecto principal
-dotnet add MiApp.Tests reference MiApp/MiApp.csproj
-
-# Restaurar dependencias
+# Restore dependencies
 dotnet restore
+
+# Build project
+dotnet build
+
+# Run project
+dotnet run
+
+# Run on specific port
+dotnet run --urls "http://127.0.0.1:5001"
+
+# Watch for changes (development)
+dotnet watch
+dotnet watch --no-hot-reload  # Disable hot reload
 ```
 
-### Estructura de carpetas recomendada
-```
-MiSolucion/
-├── src/
-│   └── MiApp/
-├── tests/
-│   ├── MiApp.UnitTests/
-│   ├── MiApp.IntegrationTests/
-│   └── MiApp.AcceptanceTests/
-└── MiSolucion.sln
-```
+#### Package Management
+```bash
+# Add NuGet package
+dotnet add package Microsoft.EntityFrameworkCore
+dotnet add package Microsoft.AspNetCore.Authentication.JwtBearer
 
-## 🧪 Frameworks de Testing
+# Remove package
+dotnet remove package PackageName
 
-### xUnit (Recomendado)
-```xml
-<PackageReference Include=\"Microsoft.NET.Test.Sdk\" Version=\"17.8.0\" />
-<PackageReference Include=\"xunit\" Version=\"2.4.2\" />
-<PackageReference Include=\"xunit.runner.visualstudio\" Version=\"2.4.5\" />
-<PackageReference Include=\"Moq\" Version=\"4.20.69\" />
-<PackageReference Include=\"FluentAssertions\" Version=\"6.12.0\" />
+# List packages
+dotnet list package
+
+# Update packages
+dotnet restore --force
 ```
 
-### NUnit
-```xml
-<PackageReference Include=\"Microsoft.NET.Test.Sdk\" Version=\"17.8.0\" />
-<PackageReference Include=\"NUnit\" Version=\"3.14.0\" />
-<PackageReference Include=\"NUnit3TestAdapter\" Version=\"4.5.0\" />
+#### Version Management
+```bash
+# Check installed SDKs
+dotnet --list-sdks
+
+# Check current version
+dotnet --version
+
+# Get system information
+dotnet --info
+
+# Create global.json for project-specific SDK
+dotnet new globaljson --force
+# Edit global.json to specify SDK version
 ```
 
-### MSTest
-```xml
-<PackageReference Include=\"Microsoft.NET.Test.Sdk\" Version=\"17.8.0\" />
-<PackageReference Include=\"MSTest.TestFramework\" Version=\"3.1.1\" />
-<PackageReference Include=\"MSTest.TestAdapter\" Version=\"3.1.1\" />
-```
-
-## 📚 Conceptos Fundamentales
-
-### Patrón AAA (Arrange, Act, Assert)
-```csharp
-[Test]
-public void DeberiaCalcularElTotalCorrectamente()
+Example `global.json`:
+```json
 {
-    // Arrange - Preparar datos y dependencias
-    var calculadora = new Calculadora();
-    var numero1 = 5;
-    var numero2 = 3;
-    
-    // Act - Ejecutar la acción que queremos probar
-    var resultado = calculadora.Sumar(numero1, numero2);
-    
-    // Assert - Verificar el resultado
-    Assert.Equal(8, resultado);
+  "sdk": {
+    "version": "8.0.408",
+    "rollForward": "latestMinor"
+  }
 }
 ```
 
-### Convención de nombres
-```csharp
-// Patrón: MetodoQuePrueba_Escenario_ResultadoEsperado
-[Test]
-public void Sumar_ConDosNumerosPositivos_DeberiaRetornarLaSuma() { }
+#### Utilities
+```bash
+# Create .gitignore
+dotnet new gitignore
 
-[Test]
-public void Dividir_PorCero_DeberiaLanzarExcepcion() { }
+# Clean build outputs
+dotnet clean
 
-[Test]
-public void ObtenerUsuario_UsuarioNoExiste_DeberiaRetornarNull() { }
+# Publish application
+dotnet publish -c Release
+
+# Create NuGet package
+dotnet pack
+
+# Install global tools
+dotnet tool install --global dotnet-ef
+dotnet tool list -g
+dotnet tool update -g dotnet-ef
 ```
 
-## 🎯 Ejemplos Prácticos
+---
 
-### 1. Testing de Clase Simple
+## Entity Framework Core
+
+### Installation and Setup
+
+```bash
+# Install EF Core tools globally
+dotnet tool install --global dotnet-ef --version 8.0.3
+
+# Verify installation
+dotnet ef --version
+
+# View available commands
+dotnet ef --help
+dotnet ef migrations --help
+dotnet ef database --help
+```
+
+### Migration Commands
+
+```bash
+# Create initial migration
+dotnet ef migrations add InitialCreate -o Data/Migrations
+
+# Add subsequent migrations
+dotnet ef migrations add UserEntityUpdated
+dotnet ef migrations add AddProductTable
+
+# Remove last migration
+dotnet ef migrations remove
+
+# Apply migrations to database
+dotnet ef database update
+
+# Update to specific migration
+dotnet ef database update InitialCreate
+
+# Drop database
+dotnet ef database drop
+
+# Generate migration script
+dotnet ef migrations script
+
+# View migration history
+dotnet ef migrations list
+```
+
+### Common EF Core Patterns
+
+```bash
+# Create migration with custom output folder
+dotnet ef migrations add AddAuditFields -o Data/Migrations/Audit
+
+# Create migration for specific context
+dotnet ef migrations add UpdateUserModel --context UserDbContext
+
+# Update database for specific environment
+dotnet ef database update --environment Production
+```
+
+---
+
+## .NET Testing Guide
+
+### Testing Frameworks Setup
+
+#### xUnit (Recommended)
+```xml
+<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+<PackageReference Include="xunit" Version="2.4.2" />
+<PackageReference Include="xunit.runner.visualstudio" Version="2.4.5" />
+<PackageReference Include="Moq" Version="4.20.69" />
+<PackageReference Include="FluentAssertions" Version="6.12.0" />
+<PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.0" />
+```
+
+#### Essential Testing Packages
+```bash
+# Add testing packages
+dotnet add package xunit
+dotnet add package xunit.runner.visualstudio
+dotnet add package Moq
+dotnet add package FluentAssertions
+dotnet add package AutoFixture
+dotnet add package Microsoft.EntityFrameworkCore.InMemory
+```
+
+### Testing Patterns and Examples
+
+#### Basic Unit Test Structure
 ```csharp
-// Clase a testear
-public class Calculadora
+// AAA Pattern: Arrange, Act, Assert
+public class CalculatorTests
 {
-    public int Sumar(int a, int b) => a + b;
+    private readonly Calculator _calculator;
     
-    public double Dividir(double a, double b)
+    public CalculatorTests()
     {
-        if (b == 0) throw new DivideByZeroException();
-        return a / b;
-    }
-    
-    public bool EsPar(int numero) => numero % 2 == 0;
-}
-
-// Tests
-public class CalculadoraTests
-{
-    private readonly Calculadora _calculadora;
-    
-    public CalculadoraTests()
-    {
-        _calculadora = new Calculadora();
+        _calculator = new Calculator();
     }
     
     [Fact]
-    public void Sumar_ConDosNumerosPositivos_DeberiaRetornarLaSuma()
+    public void Add_WithTwoPositiveNumbers_ShouldReturnSum()
     {
         // Arrange
         var a = 5;
         var b = 3;
         
         // Act
-        var resultado = _calculadora.Sumar(a, b);
+        var result = _calculator.Add(a, b);
         
         // Assert
-        resultado.Should().Be(8);
+        result.Should().Be(8);
     }
     
     [Theory]
     [InlineData(4, true)]
     [InlineData(5, false)]
     [InlineData(0, true)]
-    [InlineData(-2, true)]
-    public void EsPar_ConDiferentesNumeros_DeberiaRetornarResultadoCorrecto(int numero, bool esperado)
+    public void IsEven_WithDifferentNumbers_ShouldReturnExpectedResult(int number, bool expected)
     {
         // Act
-        var resultado = _calculadora.EsPar(numero);
+        var result = _calculator.IsEven(number);
         
         // Assert
-        resultado.Should().Be(esperado);
+        result.Should().Be(expected);
     }
     
     [Fact]
-    public void Dividir_PorCero_DeberiaLanzarExcepcion()
+    public void Divide_ByZero_ShouldThrowException()
     {
         // Arrange
         var a = 10.0;
         var b = 0.0;
         
         // Act & Assert
-        Action action = () => _calculadora.Dividir(a, b);
+        Action action = () => _calculator.Divide(a, b);
         action.Should().Throw<DivideByZeroException>();
     }
 }
 ```
 
-### 2. Testing con Mocks (Moq)
+#### Mocking with Moq
 ```csharp
-// Interfaces y servicios
-public interface IRepositorioUsuario
+public class UserServiceTests
 {
-    Usuario ObtenerPorId(int id);
-    void Guardar(Usuario usuario);
-}
-
-public class ServicioUsuario
-{
-    private readonly IRepositorioUsuario _repositorio;
+    private readonly Mock<IUserRepository> _mockRepository;
+    private readonly UserService _service;
     
-    public ServicioUsuario(IRepositorioUsuario repositorio)
+    public UserServiceTests()
     {
-        _repositorio = repositorio;
-    }
-    
-    public bool ActivarUsuario(int usuarioId)
-    {
-        var usuario = _repositorio.ObtenerPorId(usuarioId);
-        if (usuario == null) return false;
-        
-        usuario.Activo = true;
-        _repositorio.Guardar(usuario);
-        return true;
-    }
-}
-
-// Tests con Mocks
-public class ServicioUsuarioTests
-{
-    private readonly Mock<IRepositorioUsuario> _mockRepositorio;
-    private readonly ServicioUsuario _servicio;
-    
-    public ServicioUsuarioTests()
-    {
-        _mockRepositorio = new Mock<IRepositorioUsuario>();
-        _servicio = new ServicioUsuario(_mockRepositorio.Object);
+        _mockRepository = new Mock<IUserRepository>();
+        _service = new UserService(_mockRepository.Object);
     }
     
     [Fact]
-    public void ActivarUsuario_UsuarioExiste_DeberiaActivarYRetornarTrue()
+    public void GetUser_UserExists_ShouldReturnUser()
     {
         // Arrange
-        var usuarioId = 1;
-        var usuario = new Usuario { Id = usuarioId, Activo = false };
+        var userId = 1;
+        var expectedUser = new User { Id = userId, Name = "John" };
         
-        _mockRepositorio.Setup(r => r.ObtenerPorId(usuarioId))
-                       .Returns(usuario);
-        
-        // Act
-        var resultado = _servicio.ActivarUsuario(usuarioId);
-        
-        // Assert
-        resultado.Should().BeTrue();
-        usuario.Activo.Should().BeTrue();
-        _mockRepositorio.Verify(r => r.Guardar(usuario), Times.Once);
-    }
-    
-    [Fact]
-    public void ActivarUsuario_UsuarioNoExiste_DeberiaRetornarFalse()
-    {
-        // Arrange
-        var usuarioId = 999;
-        _mockRepositorio.Setup(r => r.ObtenerPorId(usuarioId))
-                       .Returns((Usuario)null);
+        _mockRepository.Setup(r => r.GetByIdAsync(userId))
+                      .ReturnsAsync(expectedUser);
         
         // Act
-        var resultado = _servicio.ActivarUsuario(usuarioId);
+        var result = await _service.GetUserAsync(userId);
         
         // Assert
-        resultado.Should().BeFalse();
-        _mockRepositorio.Verify(r => r.Guardar(It.IsAny<Usuario>()), Times.Never);
+        result.Should().NotBeNull();
+        result.Should().BeEquivalentTo(expectedUser);
+        _mockRepository.Verify(r => r.GetByIdAsync(userId), Times.Once);
     }
 }
 ```
 
-### 3. Testing Asíncrono
+#### Integration Testing
 ```csharp
-// Servicio asíncrono
-public class ServicioApiExterna
+public class UsersControllerIntegrationTests : IClassFixture<WebApplicationFactory<Program>>
 {
-    private readonly HttpClient _httpClient;
+    private readonly WebApplicationFactory<Program> _factory;
+    private readonly HttpClient _client;
     
-    public ServicioApiExterna(HttpClient httpClient)
+    public UsersControllerIntegrationTests(WebApplicationFactory<Program> factory)
     {
-        _httpClient = httpClient;
-    }
-    
-    public async Task<string> ObtenerDatosAsync(string endpoint)
-    {
-        var response = await _httpClient.GetAsync(endpoint);
-        response.EnsureSuccessStatusCode();
-        return await response.Content.ReadAsStringAsync();
-    }
-}
-
-// Tests asíncronos
-public class ServicioApiExternaTests
-{
-    private readonly Mock<HttpMessageHandler> _mockHandler;
-    private readonly HttpClient _httpClient;
-    private readonly ServicioApiExterna _servicio;
-    
-    public ServicioApiExternaTests()
-    {
-        _mockHandler = new Mock<HttpMessageHandler>();
-        _httpClient = new HttpClient(_mockHandler.Object);
-        _servicio = new ServicioApiExterna(_httpClient);
+        _factory = factory;
+        _client = _factory.CreateClient();
     }
     
     [Fact]
-    public async Task ObtenerDatos_RespuestaExitosa_DeberiaRetornarContenido()
+    public async Task GetUsers_ShouldReturnSuccessStatusCode()
     {
-        // Arrange
-        var endpoint = \"/api/datos\";
-        var contenidoEsperado = \"datos de prueba\";
-        
-        _mockHandler.Setup(h => h.SendAsync(
-            It.Is<HttpRequestMessage>(req => req.RequestUri.ToString().Contains(endpoint)),
-            It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new HttpResponseMessage
-            {
-                StatusCode = HttpStatusCode.OK,
-                Content = new StringContent(contenidoEsperado)
-            });
-        
         // Act
-        var resultado = await _servicio.ObtenerDatosAsync(endpoint);
+        var response = await _client.GetAsync("/api/users");
         
         // Assert
-        resultado.Should().Be(contenidoEsperado);
+        response.Should().BeSuccessful();
+        var content = await response.Content.ReadAsStringAsync();
+        content.Should().NotBeNullOrEmpty();
     }
 }
 ```
 
-### 4. Testing de Controllers (ASP.NET Core)
-```csharp
-[ApiController]
-[Route(\"api/[controller]\")]
-public class UsuariosController : ControllerBase
-{
-    private readonly IServicioUsuario _servicioUsuario;
-    
-    public UsuariosController(IServicioUsuario servicioUsuario)
-    {
-        _servicioUsuario = servicioUsuario;
-    }
-    
-    [HttpGet(\"{id}\")]
-    public async Task<IActionResult> ObtenerUsuario(int id)
-    {
-        var usuario = await _servicioUsuario.ObtenerPorIdAsync(id);
-        if (usuario == null) return NotFound();
-        
-        return Ok(usuario);
-    }
-    
-    [HttpPost]
-    public async Task<IActionResult> CrearUsuario([FromBody] CrearUsuarioRequest request)
-    {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
-        
-        var usuario = await _servicioUsuario.CrearAsync(request);
-        return CreatedAtAction(nameof(ObtenerUsuario), new { id = usuario.Id }, usuario);
-    }
-}
+### Test Execution Commands
 
-// Tests del Controller
-public class UsuariosControllerTests
-{
-    private readonly Mock<IServicioUsuario> _mockServicio;
-    private readonly UsuariosController _controller;
-    
-    public UsuariosControllerTests()
-    {
-        _mockServicio = new Mock<IServicioUsuario>();
-        _controller = new UsuariosController(_mockServicio.Object);
-    }
-    
-    [Fact]
-    public async Task ObtenerUsuario_UsuarioExiste_DeberiaRetornarOk()
-    {
-        // Arrange
-        var usuarioId = 1;
-        var usuario = new Usuario { Id = usuarioId, Nombre = \"Juan\" };
-        
-        _mockServicio.Setup(s => s.ObtenerPorIdAsync(usuarioId))
-                    .ReturnsAsync(usuario);
-        
-        // Act
-        var resultado = await _controller.ObtenerUsuario(usuarioId);
-        
-        // Assert
-        var okResult = resultado.Should().BeOfType<OkObjectResult>().Subject;
-        okResult.Value.Should().Be(usuario);
-    }
-    
-    [Fact]
-    public async Task ObtenerUsuario_UsuarioNoExiste_DeberiaRetornarNotFound()
-    {
-        // Arrange
-        var usuarioId = 999;
-        _mockServicio.Setup(s => s.ObtenerPorIdAsync(usuarioId))
-                    .ReturnsAsync((Usuario)null);
-        
-        // Act
-        var resultado = await _controller.ObtenerUsuario(usuarioId);
-        
-        // Assert
-        resultado.Should().BeOfType<NotFoundResult>();
-    }
-    
-    [Fact]
-    public async Task CrearUsuario_ModeloInvalido_DeberiaRetornarBadRequest()
-    {
-        // Arrange
-        _controller.ModelState.AddModelError(\"Nombre\", \"El nombre es requerido\");
-        var request = new CrearUsuarioRequest();
-        
-        // Act
-        var resultado = await _controller.CrearUsuario(request);
-        
-        // Assert
-        resultado.Should().BeOfType<BadRequestObjectResult>();
-    }
-}
-```
-
-## 🛠️ Herramientas y Utilidades
-
-### FluentAssertions
-```csharp
-// En lugar de Assert.Equal
-resultado.Should().Be(valorEsperado);
-
-// Para colecciones
-lista.Should().HaveCount(3)
-     .And.Contain(x => x.Nombre == \"Juan\")
-     .And.NotContain(x => x.Activo == false);
-
-// Para excepciones
-Action action = () => metodo.EjecutarAlgo();
-action.Should().Throw<InvalidOperationException>()
-      .WithMessage(\"Mensaje específico\");
-
-// Para objetos
-usuario.Should().BeEquivalentTo(usuarioEsperado, options => 
-    options.Excluding(x => x.Id));
-```
-
-### AutoFixture (Generación de datos de prueba)
-```csharp
-public class UsuarioTestsConAutoFixture
-{
-    private readonly IFixture _fixture;
-    
-    public UsuarioTestsConAutoFixture()
-    {
-        _fixture = new Fixture();
-    }
-    
-    [Fact]
-    public void CrearUsuario_ConDatosValidos_DeberiaCrearCorrectamente()
-    {
-        // Arrange
-        var usuario = _fixture.Create<Usuario>();
-        var request = _fixture.Build<CrearUsuarioRequest>()
-                             .With(x => x.Email, \"test@ejemplo.com\")
-                             .Create();
-        
-        // Act & Assert...
-    }
-}
-```
-
-## 🎯 Comandos Útiles
-
-### Ejecutar tests
 ```bash
-# Ejecutar todos los tests
+# Run all tests
 dotnet test
 
-# Ejecutar tests de un proyecto específico
-dotnet test MiApp.Tests/
-
-# Ejecutar tests con cobertura
-dotnet test --collect:\"XPlat Code Coverage\"
-
-# Ejecutar solo tests que contengan un nombre específico
-dotnet test --filter \"UsuarioTests\"
-
-# Ejecutar tests de una clase específica
-dotnet test --filter \"FullyQualifiedName~MiApp.Tests.UsuarioTests\"
-
-# Ejecutar tests con verbosidad detallada
+# Run tests with detailed output
 dotnet test --verbosity detailed
 
-# Generar reporte de cobertura HTML
+# Run specific test project
+dotnet test MyApp.Tests/
+
+# Filter tests by name
+dotnet test --filter "UserServiceTests"
+
+# Run tests with code coverage
+dotnet test --collect:"XPlat Code Coverage"
+
+# Generate coverage report
 dotnet tool install -g dotnet-reportgenerator-globaltool
-reportgenerator -reports:\"coverage.cobertura.xml\" -targetdir:\"coveragereport\" -reporttypes:Html
+reportgenerator -reports:"coverage.cobertura.xml" -targetdir:"coveragereport" -reporttypes:Html
+
+# Run tests in parallel
+dotnet test --parallel
+
+# Run tests with custom settings
+dotnet test --settings test.runsettings
 ```
-
-### Configuración de coverage
-```xml
-<!-- En el .csproj del proyecto de tests -->
-<PropertyGroup>
-  <CollectCoverage>true</CollectCoverage>
-  <CoverletOutputFormat>cobertura</CoverletOutputFormat>
-  <CoverletOutput>./coverage/</CoverletOutput>
-  <ExcludeByFile>**/Migrations/**</ExcludeByFile>
-  <Exclude>[*]*.Program,[*]*.Startup</Exclude>
-</PropertyGroup>
-```
-
-## 🏗️ Patrones y Mejores Prácticas
-
-### Test Builders
-```csharp
-public class UsuarioBuilder
-{
-    private Usuario _usuario = new Usuario();
-    
-    public UsuarioBuilder ConNombre(string nombre)
-    {
-        _usuario.Nombre = nombre;
-        return this;
-    }
-    
-    public UsuarioBuilder ConEmail(string email)
-    {
-        _usuario.Email = email;
-        return this;
-    }
-    
-    public UsuarioBuilder Activo()
-    {
-        _usuario.Activo = true;
-        return this;
-    }
-    
-    public Usuario Build() => _usuario;
-}
-
-// Uso en tests
-[Fact]
-public void Test_ConBuilder()
-{
-    var usuario = new UsuarioBuilder()
-        .ConNombre(\"Juan\")
-        .ConEmail(\"juan@test.com\")
-        .Activo()
-        .Build();
-    
-    // Test...
-}
-```
-
-### Object Mother
-```csharp
-public static class UsuarioMother
-{
-    public static Usuario UsuarioBasico() => new Usuario
-    {
-        Id = 1,
-        Nombre = \"Usuario Test\",
-        Email = \"test@ejemplo.com\",
-        Activo = true
-    };
-    
-    public static Usuario UsuarioInactivo() => UsuarioBasico() with { Activo = false };
-    
-    public static Usuario UsuarioConEmail(string email) => UsuarioBasico() with { Email = email };
-}
-```
-
-### Setup común con IClassFixture
-```csharp
-public class DatabaseFixture : IDisposable
-{
-    public IServiceProvider ServiceProvider { get; private set; }
-    
-    public DatabaseFixture()
-    {
-        var services = new ServiceCollection();
-        services.AddDbContext<AppDbContext>(options =>
-            options.UseInMemoryDatabase(Guid.NewGuid().ToString()));
-        
-        ServiceProvider = services.BuildServiceProvider();
-    }
-    
-    public void Dispose()
-    {
-        ServiceProvider?.Dispose();
-    }
-}
-
-[Collection(\"Database\")]
-public class IntegrationTests : IClassFixture<DatabaseFixture>
-{
-    private readonly DatabaseFixture _fixture;
-    
-    public IntegrationTests(DatabaseFixture fixture)
-    {
-        _fixture = fixture;
-    }
-    
-    // Tests...
-}
-```
-
-## 🚨 Qué NO hacer
-
-### ❌ Tests frágiles
-```csharp
-// MAL - Depende del estado global
-[Fact]
-public void Test_Malo()
-{
-    DateTime.Now.Should().Be(new DateTime(2023, 1, 1)); // Se rompe siempre
-}
-
-// BIEN - Mockear dependencias externas
-[Fact]
-public void Test_Bueno()
-{
-    var mockDateTime = new Mock<IDateTimeProvider>();
-    mockDateTime.Setup(x => x.Now).Returns(new DateTime(2023, 1, 1));
-    // ...
-}
-```
-
-### ❌ Tests que testean implementación
-```csharp
-// MAL - Testa implementación interna
-[Fact]
-public void Test_Malo()
-{
-    _mockRepo.Verify(x => x.Connection.Open(), Times.Once);
-}
-
-// BIEN - Testa comportamiento
-[Fact]
-public void Test_Bueno()
-{
-    var resultado = _servicio.ObtenerUsuarios();
-    resultado.Should().HaveCount(3);
-}
-```
-
-## 🎯 Tips Finales
-
-1. **Un test, un concepto**: Cada test debe verificar una sola cosa
-2. **Nombres descriptivos**: El nombre del test debe explicar qué se está probando
-3. **Independencia**: Los tests no deben depender entre sí
-4. **Rápidos**: Los unit tests deben ejecutarse rápido
-5. **Determinísticos**: Mismo input, mismo output siempre
-6. **Tests como documentación**: Los tests deben explicar cómo usar el código
-
-¡Dale que con esto tenés una base sólida para testear en .NET! 🚀
 
 ---
 
-## 🔗 Recursos Adicionales
+## Angular CLI
 
-- [Documentación oficial de .NET Testing](https://docs.microsoft.com/en-us/dotnet/core/testing/)
-- [xUnit Documentation](https://xunit.net/)
-- [Moq Documentation](https://github.com/moq/moq4)
-- [FluentAssertions Documentation](https://fluentassertions.com/)
-- [AutoFixture Documentation](https://github.com/AutoFixture/AutoFixture)
+### Installation and Version Management
 
----
-
-*Esta guía es parte del [Dotnet Angular CLI Cheat Sheet](https://github.com/shashinvision/dotnet_angular_cli_cheatsheet) - Un recurso completo para desarrolladores full stack.*
-`
-}
-
-
-## Angular CLI 
-- Install Current Angular CLI 
 ```bash
+# Install latest Angular CLI globally
 npm install -g @angular/cli
-```
-- Install different version of Angular NG CLI if you need it  
-```bash
-npm uninstall -g @angular/cli
-```
-```bash
-npm install -g @angular/cli@14
-```
-```bash
-npm install -g @angular/cli@13.3.0
-```
-```bash
-npm install -g @angular/cli
-```
-- For specific verion use
-```bash
+
+# Install specific version
 npm install -g @angular/cli@17
-```
-- To use Angular CLI, just need to check the version
-```bash
+npm install -g @angular/cli@16.2.0
+
+# Uninstall current version
+npm uninstall -g @angular/cli
+
+# Check version
 ng version
 ```
 
+### Project Creation
 
-
-- New standalone Angular project, in this case we use SPA not SSR, with CSS 
-```bash 
-ng new [PROJECT NAME]
-cd [PROJECT NAME]
+```bash
+# Create new standalone project (Angular 17+)
+ng new MyApp
+cd MyApp
 ng serve
-```
 
-- Create a Modular project 
-```bash
-ng new Client --standalone=false
-```
+# Create modular project (traditional structure)
+ng new MyApp --standalone=false
 
-- To use Serve
-```bash
+# Create project with specific options
+ng new MyApp --routing --style=scss --skip-tests --package-manager=npm
+
+# Serve application
 ng serve
-```
-- To use Serve with open automatically on browser
-```bash
-ng serve -o
+ng serve -o  # Open browser automatically
+ng serve --port 4201  # Custom port
 ```
 
-## '[optional]' Use mkcert to create  locally-trusted certificates on boostrap project **https://github.com/FiloSottile/mkcert** 
-- on Mac '(use the repository readme for more instructions)'
+### SSL Configuration
+
+#### Using mkcert (Recommended)
 ```bash
+# Install mkcert (macOS)
 brew install mkcert
-```
-```bash
 mkcert -install
-```
-- In the client project (Angular) create a ssl folder
-```bash
+
+# Create SSL certificates
 mkdir ssl
-```
-```bash
 cd ssl
-```
-```bash
 mkcert localhost
+
+# Configure Angular CLI
 ```
-- next you need to use in the local system or development serve, example here is in angular.js amnd next: 
-- 
+
+Add to `angular.json`:
 ```json
 {
   "serve": {
+    "builder": "@angular-devkit/build-angular:dev-server",
     "options": {
       "ssl": true,
       "sslCert": "./ssl/localhost.pem",
       "sslKey": "./ssl/localhost-key.pem"
     }
   }
-  ...// rest of json
 }
 ```
 
-- Con certificados autofirmados de Angular:
+#### Using Angular's built-in SSL
 ```bash
 ng serve --ssl
-```
-- Con configuración específica:
-
-```bash
 ng serve --ssl --host localhost --port 4200
 ```
 
-- Interceptor 
-```bash
-ng g interceptor [name]
-```
-- Example interceptor
-```bash
-ng g interceptor _interceptors/error --skip-tests
-```
+### Code Generation
 
-- Create commands help ng
 ```bash
+# Get help for generators
 ng generate --help
-```
-- create component help
-```bash
 ng generate component --help
-```
-- See how a Component nav could will create but not create at all
-```bash
-ng generate component nav --dry-run
-```
-- Create a Component nav using --skip-tests option
-```bash
+
+# Component generation
 ng generate component nav --skip-tests
-```
-- Example Create a Service --skip-tests option
-```bash
-ng g s _services/members --skip-tests
-```
-- Create a Enviroment like a .env 
-```bash
+ng g c shared/header --skip-tests
+
+# Service generation
+ng g s services/user --skip-tests
+ng g s core/services/auth --skip-tests
+
+# Other generators
+ng g interface models/user
+ng g enum enums/user-role
+ng g pipe pipes/capitalize
+ng g directive directives/highlight
+ng g guard guards/auth
+ng g interceptor interceptors/error --skip-tests
+
+# Module generation (for non-standalone apps)
+ng g module shared
+ng g module feature/user --routing
+
+# Environment files
 ng g environments
 ```
 
+### Advanced Angular CLI Commands
 
+```bash
+# Build for production
+ng build --prod
+ng build --configuration production
+
+# Analyze bundle size
+ng build --stats-json
+npx webpack-bundle-analyzer dist/stats.json
+
+# Add dependencies
+ng add @angular/material
+ng add @ngrx/store
+ng add @angular/pwa
+
+# Update dependencies
+ng update
+ng update @angular/core @angular/cli
+
+# Lint and format
+ng lint
+ng lint --fix
+
+# Test commands
+ng test
+ng test --watch=false --browsers=ChromeHeadless
+ng e2e
+
+# Extract i18n messages
+ng extract-i18n
+
+# Dry run (preview changes)
+ng generate component nav --dry-run
+```
+
+---
+
+## Development Tools
+
+### Jupyter Notebooks with .NET
+
+#### Setup
+```bash
+# Install Python dependencies
+pip install jupyterlab
+
+# Install .NET Interactive
+dotnet tool install -g Microsoft.dotnet-interactive
+
+# Register kernels with Jupyter
+dotnet interactive jupyter install
+
+# Verify installation
+jupyter kernelspec list
+
+# Build and start Jupyter Lab
+jupyter lab build
+jupyter-lab
+```
+
+#### Alternative with X Tool
+```bash
+# Install X tool
+dotnet tool install --global x
+dotnet tool update -g x
+
+# Generate C# Jupyter notebooks
+x jupyter-csharp
+x jupyter-csharp https://techstacks.io FindTechStacks "{Ids:[1,2,3],VendorName:'Google',Take:5}"
+```
+
+### Productivity Tips
+
+#### LazyVim + Tmux Workflow
+```bash
+# Essential tmux commands for .NET development
+tmux new -s dotnet-dev
+tmux split-window -h
+tmux split-window -v
+
+# Window management
+Ctrl+b + %  # Split horizontally  
+Ctrl+b + "  # Split vertically
+Ctrl+b + arrow  # Navigate panes
+```
+
+#### Git Integration
+```bash
+# Create comprehensive .gitignore
+dotnet new gitignore
+
+# Common additions for Angular projects
+echo "dist/" >> .gitignore
+echo "node_modules/" >> .gitignore
+echo ".angular/" >> .gitignore
+```
+
+### Performance and Debugging
+
+#### .NET Performance
+```bash
+# Enable detailed logging
+export DOTNET_LOGGING_LEVEL=Debug
+
+# Memory profiling
+dotnet-trace collect --process-id <PID>
+
+# Performance counters
+dotnet-counters monitor --process-id <PID>
+```
+
+#### Angular Performance
+```bash
+# Bundle analysis
+ng build --stats-json
+npm install -g webpack-bundle-analyzer
+webpack-bundle-analyzer dist/stats.json
+
+# Lighthouse CI
+npm install -g @lhci/cli
+lhci autorun
+```
+
+---
+
+## Common Workflows
+
+### Full-Stack Development Setup
+
+```bash
+# Backend setup
+mkdir MyFullStackApp
+cd MyFullStackApp
+
+# Create .NET API
+dotnet new sln -n MyApp
+dotnet new webapi -controllers -n MyApp.Api
+dotnet sln add MyApp.Api/MyApp.Api.csproj
+
+# Frontend setup
+ng new client --directory=client --skip-git
+cd client
+ng serve --port 4200
+
+# Back to API
+cd ../MyApp.Api
+dotnet watch --no-hot-reload
+```
+
+### Docker Integration
+
+```dockerfile
+# Dockerfile for .NET API
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+WORKDIR /app
+EXPOSE 80
+
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+COPY ["MyApp.Api/MyApp.Api.csproj", "MyApp.Api/"]
+RUN dotnet restore "MyApp.Api/MyApp.Api.csproj"
+COPY . .
+WORKDIR "/src/MyApp.Api"
+RUN dotnet build "MyApp.Api.csproj" -c Release -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "MyApp.Api.csproj" -c Release -o /app/publish
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "MyApp.Api.dll"]
+```
+
+### CI/CD Pipeline Example
+
+```yaml
+# .github/workflows/dotnet.yml
+name: .NET Core CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x'
+    
+    - name: Restore dependencies
+      run: dotnet restore
+    
+    - name: Build
+      run: dotnet build --no-restore
+    
+    - name: Test
+      run: dotnet test --no-build --verbosity normal --collect:"XPlat Code Coverage"
+    
+    - name: Generate coverage report
+      run: |
+        dotnet tool install -g dotnet-reportgenerator-globaltool
+        reportgenerator -reports:"**/coverage.cobertura.xml" -targetdir:"coveragereport" -reporttypes:Html
+```
+
+---
+
+## Troubleshooting
+
+### Common .NET Issues
+
+```bash
+# Clear NuGet cache
+dotnet nuget locals all --clear
+
+# Reset global tools
+dotnet tool uninstall -g dotnet-ef
+dotnet tool install -g dotnet-ef
+
+# Fix certificate issues
+dotnet dev-certs https --clean
+dotnet dev-certs https --trust
+
+# Check process using port
+lsof -i :5000
+kill -9 <PID>
+```
+
+### Common Angular Issues
+
+```bash
+# Clear npm cache
+npm cache clean --force
+
+# Clear Angular cache
+ng cache clean
+
+# Reset node_modules
+rm -rf node_modules package-lock.json
+npm install
+
+# Fix permissions (macOS/Linux)
+sudo chown -R $(whoami) ~/.npm
+```
+
+---
+
+## Best Practices
+
+### Project Structure
+```
+MyFullStackApp/
+├── src/
+│   ├── MyApp.Api/          # Web API
+│   ├── MyApp.Core/         # Business logic
+│   ├── MyApp.Infrastructure/ # Data access
+│   └── MyApp.Shared/       # Shared models
+├── tests/
+│   ├── MyApp.UnitTests/
+│   ├── MyApp.IntegrationTests/
+│   └── MyApp.AcceptanceTests/
+├── client/                 # Angular app
+├── docs/                   # Documentation
+├── scripts/                # Build scripts
+└── docker-compose.yml      # Local development
+```
+
+### Code Quality
+
+```bash
+# .NET code analysis
+dotnet add package Microsoft.CodeAnalysis.Analyzers
+dotnet add package StyleCop.Analyzers
+
+# Angular code quality
+ng add @angular-eslint/schematics
+npm install --save-dev prettier
+npm install --save-dev husky lint-staged
+```
+
+### Security
+
+```bash
+# .NET security packages
+dotnet add package Microsoft.AspNetCore.Authentication.JwtBearer
+dotnet add package Microsoft.AspNetCore.DataProtection
+
+# Angular security
+ng add @angular/cdk
+npm install --save helmet
+npm install --save express-rate-limit
+```
+
+---
+
+## Resources and References
+
+- [.NET Documentation](https://docs.microsoft.com/en-us/dotnet/)
+- [Entity Framework Core](https://docs.microsoft.com/en-us/ef/core/)
+- [Angular Documentation](https://angular.io/docs)
+- [xUnit Testing](https://xunit.net/)
+- [Moq Framework](https://github.com/moq/moq4)
+- [FluentAssertions](https://fluentassertions.com/)
+
+---
+
+*This cheat sheet is designed for intermediate to advanced full-stack developers working with .NET and Angular. Keep it handy for quick reference during development!*
