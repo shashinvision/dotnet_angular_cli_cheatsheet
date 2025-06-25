@@ -1,18 +1,18 @@
-# .NET and Angular CLI Cheat Sheet
+# .NET and Angular CLI Cheat Sheet 📋
 
 A comprehensive guide for full-stack developers working with .NET and Angular. This cheat sheet covers everything from initial setup to advanced testing strategies.
 
 ## Table of Contents
-- [.NET Core Setup](#net-core-setup)
-- [.NET CLI Commands](#net-cli-commands)
-- [Entity Framework Core](#entity-framework-core)
-- [.NET Testing Guide](#net-testing-guide)
-- [Angular CLI](#angular-cli)
-- [Development Tools](#development-tools)
+- [.NET Core Setup](#net-core-setup) 🛠️
+- [.NET CLI Commands](#net-cli-commands) 🖥️
+- [Entity Framework Core](#entity-framework-core) 🗃️
+- [.NET Testing Guide](#net-testing-guide) 🧪
+- [Angular CLI](#angular-cli) ⚡
+- [Development Tools](#development-tools) 🧰
 
 ---
 
-## .NET Core Setup
+## .NET Core Setup 🛠️
 
 ### Linux/Mac Development Environment
 
@@ -32,7 +32,6 @@ cd omnisharp-roslyn
 ```
 
 #### Multiple .NET SDK Versions Setup
-
 ```bash
 # Create dotnet directory
 mkdir ~/.dotnet
@@ -50,21 +49,18 @@ dotnet --list-sdks
 ```
 
 #### Environment Configuration
-
 Add to your `.zshrc` or `.bashrc`:
 ```bash
 export DOTNET_ROOT=$HOME/.dotnet
 export PATH=$HOME/.dotnet:$PATH
 export DOTNET_ROLL_FORWARD=Major  # Use latest major version
 ```
-
 Reload configuration:
 ```bash
 source ~/.zshrc  # or source ~/.bashrc
 ```
 
 #### SSL Certificate Issues (Linux)
-
 ```bash
 # Install and configure dev certificates
 dotnet tool update -g linux-dev-certs
@@ -77,7 +73,7 @@ dotnet dev-certs https --trust
 
 ---
 
-## .NET CLI Commands
+## .NET CLI Commands 🖥️
 
 ### Project Creation and Management
 
@@ -103,7 +99,6 @@ dotnet sln list
 ```bash
 # Create organized solution structure
 dotnet new sln -n MyApp
-
 mkdir MyApp.Api
 mkdir MyApp.Core
 mkdir MyApp.Infrastructure
@@ -188,9 +183,7 @@ dotnet --info
 
 # Create global.json for project-specific SDK
 dotnet new globaljson --force
-# Edit global.json to specify SDK version
 ```
-
 Example `global.json`:
 ```json
 {
@@ -223,10 +216,9 @@ dotnet tool update -g dotnet-ef
 
 ---
 
-## Entity Framework Core
+## Entity Framework Core 🗃️
 
 ### Installation and Setup
-
 ```bash
 # Install EF Core tools globally
 dotnet tool install --global dotnet-ef --version 8.0.3
@@ -241,7 +233,6 @@ dotnet ef database --help
 ```
 
 ### Migration Commands
-
 ```bash
 # Create initial migration
 dotnet ef migrations add InitialCreate -o Data/Migrations
@@ -270,7 +261,6 @@ dotnet ef migrations list
 ```
 
 ### Common EF Core Patterns
-
 ```bash
 # Create migration with custom output folder
 dotnet ef migrations add AddAuditFields -o Data/Migrations/Audit
@@ -284,7 +274,7 @@ dotnet ef database update --environment Production
 
 ---
 
-## .NET Testing Guide
+## .NET Testing Guide 🧪
 
 ### Testing Frameworks Setup
 
@@ -306,26 +296,28 @@ dotnet ef database update --environment Production
 <PackageReference Include="coverlet.collector" Version="3.2.0" />
 ```
 
-# xUnit/NUnit packages
-```xml
+#### xUnit/NUnit packages
+```bash
 dotnet add package xunit
 dotnet add package xunit.runner.visualstudio
 ```
-```xml
-# NUnit packages
+
+#### NUnit packages
+```bash
 dotnet add package NUnit
 dotnet add package NUnit3TestAdapter
 dotnet add package Microsoft.NET.Test.Sdk
 ```
-```xml
-# Shared packages
+
+#### Shared packages
+```bash
 dotnet add package Moq
 dotnet add package FluentAssertions
 dotnet add package AutoFixture
 dotnet add package Microsoft.EntityFrameworkCore.InMemory
 ```
 
-#### Essential Testing Packages
+### Essential Testing Packages
 ```bash
 # Add testing packages
 dotnet add package xunit
@@ -338,8 +330,7 @@ dotnet add package Microsoft.EntityFrameworkCore.InMemory
 
 ### Testing Patterns and Examples
 
-### NUnit Basic Test Example
-
+#### NUnit Basic Test Example
 ```csharp
 [TestFixture]
 public class CalculatorTests
@@ -442,7 +433,7 @@ public class UserServiceTests
     }
     
     [Fact]
-    public void GetUser_UserExists_ShouldReturnUser()
+    public async void GetUser_UserExists_ShouldReturnUser()
     {
         // Arrange
         var userId = 1;
@@ -490,7 +481,6 @@ public class UsersControllerIntegrationTests : IClassFixture<WebApplicationFacto
 ```
 
 ### Test Execution Commands
-
 ```bash
 # Run all tests
 dotnet test
@@ -526,10 +516,9 @@ dotnet test --settings test.runsettings
 
 ---
 
-## Angular CLI
+## Angular CLI ⚡
 
 ### Installation and Version Management
-
 ```bash
 # Install latest Angular CLI globally
 npm install -g @angular/cli
@@ -546,7 +535,6 @@ ng version
 ```
 
 ### Project Creation
-
 ```bash
 # Create new standalone project (Angular 17+)
 ng new MyApp
@@ -602,7 +590,6 @@ ng serve --ssl --host localhost --port 4200
 ```
 
 ### Code Generation
-
 ```bash
 # Get help for generators
 ng generate --help
@@ -633,7 +620,6 @@ ng g environments
 ```
 
 ### Advanced Angular CLI Commands
-
 ```bash
 # Build for production
 ng build --prod
@@ -670,7 +656,7 @@ ng generate component nav --dry-run
 
 ---
 
-## Development Tools
+## Development Tools 🧰
 
 ### Jupyter Notebooks with .NET
 
@@ -714,7 +700,7 @@ tmux split-window -h
 tmux split-window -v
 
 # Window management
-Ctrl+b + %  # Split horizontally  
+Ctrl+b + %  # Split horizontally
 Ctrl+b + "  # Split vertically
 Ctrl+b + arrow  # Navigate panes
 ```
@@ -761,7 +747,6 @@ lhci autorun
 ## Common Workflows
 
 ### Full-Stack Development Setup
-
 ```bash
 # Backend setup
 mkdir MyFullStackApp
@@ -783,7 +768,6 @@ dotnet watch --no-hot-reload
 ```
 
 ### Docker Integration
-
 ```dockerfile
 # Dockerfile for .NET API
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
@@ -808,13 +792,10 @@ ENTRYPOINT ["dotnet", "MyApp.Api.dll"]
 ```
 
 ### CI/CD Pipeline Example
-
 ```yaml
 # .github/workflows/dotnet.yml
 name: .NET Core CI
-
 on: [push, pull_request]
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -847,7 +828,6 @@ jobs:
 ## Troubleshooting
 
 ### Common .NET Issues
-
 ```bash
 # Clear NuGet cache
 dotnet nuget locals all --clear
@@ -866,7 +846,6 @@ kill -9 <PID>
 ```
 
 ### Common Angular Issues
-
 ```bash
 # Clear npm cache
 npm cache clean --force
@@ -905,7 +884,6 @@ MyFullStackApp/
 ```
 
 ### Code Quality
-
 ```bash
 # .NET code analysis
 dotnet add package Microsoft.CodeAnalysis.Analyzers
@@ -918,7 +896,6 @@ npm install --save-dev husky lint-staged
 ```
 
 ### Security
-
 ```bash
 # .NET security packages
 dotnet add package Microsoft.AspNetCore.Authentication.JwtBearer
@@ -933,14 +910,13 @@ npm install --save express-rate-limit
 ---
 
 ## Resources and References
-
-- [.NET Documentation](https://docs.microsoft.com/en-us/dotnet/)
-- [Entity Framework Core](https://docs.microsoft.com/en-us/ef/core/)
-- [Angular Documentation](https://angular.io/docs)
-- [xUnit Testing](https://xunit.net/)
-- [Moq Framework](https://github.com/moq/moq4)
-- [FluentAssertions](https://fluentassertions.com/)
+- [.NET Documentation](https://docs.microsoft.com/en-us/dotnet/) 📚
+- [Entity Framework Core](https://docs.microsoft.com/en-us/ef/core/) 🗃️
+- [Angular Documentation](https://angular.io/docs) ⚡
+- [xUnit Testing](https://xunit.net/) 🧪
+- [Moq Framework](https://github.com/moq/moq4) 🧩
+- [FluentAssertions](https://fluentassertions.com/) ✅
 
 ---
 
-*This cheat sheet is designed for intermediate to advanced full-stack developers working with .NET and Angular. Keep it handy for quick reference during development!*
+*This cheat sheet is designed for intermediate to advanced full-stack developers working with .NET and Angular. Keep it handy for quick reference during development!* 🚀
