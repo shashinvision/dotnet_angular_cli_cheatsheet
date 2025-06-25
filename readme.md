@@ -418,8 +418,6 @@ Source: https://docs.servicestack.net/jupyter-notebooks-csharp#generate-c-jupyte
 ## Test en Dotnet 
 
 {
-  `path`: `UNIT_TESTING.md`,
-  `content`: `# 📝 Unit Testing en .NET - Guía Completa
 
 ## 🚀 Setup Inicial
 
