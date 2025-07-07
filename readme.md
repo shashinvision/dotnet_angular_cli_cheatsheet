@@ -152,6 +152,7 @@ dotnet run --urls "http://127.0.0.1:5001"
 # Watch for changes (development)
 dotnet watch
 dotnet watch --no-hot-reload  # Disable hot reload
+dotnet watch --no-hot-reload --project MyApi/MyApi.csproj
 ```
 
 #### Package Management
