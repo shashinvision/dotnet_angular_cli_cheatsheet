@@ -46,6 +46,22 @@ tar -zxf dotnet-sdk-6.0.425-linux-x64.tar.gz -C ~/.dotnet
 
 # Verify installations
 dotnet --list-sdks
+
+# Delete 
+
+sudo rm -rf /usr/local/share/dotnet/sdk/6.0.*
+sudo rm -rf /usr/local/share/dotnet/sdk/7.0.*
+sudo rm -rf /usr/local/share/dotnet/sdk/8.0.403
+
+## optional delete runtimes
+
+ls /usr/local/share/dotnet/shared/Microsoft.NETCore.App
+sudo rm -rf /usr/local/share/dotnet/shared/Microsoft.NETCore.App/6.*
+sudo rm -rf /usr/local/share/dotnet/shared/Microsoft.NETCore.App/7.*
+
+# Verify 
+dotnet --list-sdks
+
 ```
 
 #### Environment Configuration
