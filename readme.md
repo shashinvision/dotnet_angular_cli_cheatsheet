@@ -531,6 +531,21 @@ dotnet test --parallel
 dotnet test --settings test.runsettings
 ```
 
+## REPORT TEST: 
+### coverlet.collector
+```bash
+dotnet add package coverlet.collector
+```
+```bash
+dotnet test --collect:"XPlat Code Coverage" /p:Threshold=70 /p:ThresholdStat=Total
+```
+### reportgenerator
+```bash
+dotnet tool install -g dotnet-reportgenerator-globaltool
+```
+```bash
+reportgenerator -reports:"./TestResults/**/coverage.cobertura.xml" -targetdir:"coverage" -reporttypes:Html
+```
 ---
 
 ## Angular CLI ⚡
