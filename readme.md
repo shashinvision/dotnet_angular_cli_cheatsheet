@@ -546,6 +546,9 @@ dotnet tool install -g dotnet-reportgenerator-globaltool
 ```bash
 reportgenerator -reports:"./TestResults/**/coverage.cobertura.xml" -targetdir:"coverage" -reporttypes:Html
 ```
+```bash
+open coverage/index.html
+```
 ---
 
 ## Angular CLI ⚡
