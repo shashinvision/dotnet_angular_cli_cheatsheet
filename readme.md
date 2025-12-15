@@ -520,9 +520,9 @@ dotnet test --filter "FullyQualifiedName~CalculatorTests"
 # Run tests with code coverage
 dotnet test --collect:"XPlat Code Coverage"
 
-# Generate coverage report
-dotnet tool install -g dotnet-reportgenerator-globaltool
-reportgenerator -reports:"coverage.cobertura.xml" -targetdir:"coveragereport" -reporttypes:Html
+# Generate coverage 
+dotnet tool install -g dotnet-generator-globaltool
+generator -s:"coverage.cobertura.xml" -targetdir:"coverage" -types:Html
 
 # Run tests in parallel
 dotnet test --parallel
@@ -548,6 +548,28 @@ reportgenerator -reports:"./TestResults/**/coverage.cobertura.xml" -targetdir:"c
 ```
 ```bash
 open coverage/index.html
+```
+### Para excluir del reporte y Coverage usa este decorador
+```bash
+    [ExcludeFromCodeCoverage]
+```
+```bash
+using System.Diagnostics.CodeAnalysis;
+
+public class OrdenService
+{
+    [ExcludeFromCodeCoverage]
+    public OrdenService()
+    {
+        // Constructor solo para DI / configuración
+    }
+}
+```
+```bash
+[ExcludeFromCodeCoverage]
+public class MapperProfile
+{
+}
 ```
 ---
 
