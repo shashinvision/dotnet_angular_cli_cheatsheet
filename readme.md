@@ -879,7 +879,29 @@ jobs:
         dotnet tool install -g dotnet-reportgenerator-globaltool
         reportgenerator -reports:"**/coverage.cobertura.xml" -targetdir:"coveragereport" -reporttypes:Html
 ```
-
+### excluir con coverlet.runsettings
+```bash
+coverlet.runsettings
+```
+```yaml
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="XPlat Code Coverage">
+        <Configuration>
+          <Format>coverage</Format>
+		  <ExcludeByFile>**/Infrastructure/Contexts/*</ExcludeByFile>
+		  <ExcludeByFile>**/Models/*</ExcludeByFile>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>
+```
+```yaml
+dotnet test --collect:"XPlat Code Coverage" /p:Threshold=70 /p:ThresholdStat=Total --settings coverlet.runsettings
+```
 ---
 
 ## Troubleshooting
