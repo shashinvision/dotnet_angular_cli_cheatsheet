@@ -891,8 +891,10 @@ coverlet.runsettings
       <DataCollector friendlyName="XPlat Code Coverage">
         <Configuration>
           <Format>coverage</Format>
-		  <ExcludeByFile>**/Infrastructure/Contexts/*</ExcludeByFile>
-		  <ExcludeByFile>**/Models/*</ExcludeByFile>
+            <ExcludeByFile>**/Infrastructure/Contexts/*</ExcludeByFile>
+            <ExcludeByFile>**/Models/*</ExcludeByFile>
+            <ExcludeByFile>**/Models/DTOs/*</ExcludeByFile>
+            <ExcludeByFile>**/Models/Entities/*</ExcludeByFile>
         </Configuration>
       </DataCollector>
     </DataCollectors>
