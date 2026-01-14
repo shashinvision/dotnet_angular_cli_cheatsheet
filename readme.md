@@ -571,6 +571,36 @@ public class MapperProfile
 {
 }
 ```
+
+### Automatizar el TEST con un archivo test-coverage.sh, recuerda colocar chmod +x test-coverage.sh y para ejecutar ./test-coverage.sh
+
+
+```bash
+chmod +x test-coverage.sh
+```
+```bash
+./test-coverage.sh
+```
+#### Archivo test-coverage.sh
+```bash
+#!/bin/bash
+
+# Limpiar
+rm -rf TestResults/ coverage/
+
+# Tests con cobertura
+dotnet test --collect:"XPlat Code Coverage" /p:Threshold=70 /p:ThresholdStat=Total --settings coverlet.runsettings
+
+# Reporte ignorando archivos generados
+reportgenerator \
+  -reports:"./TestResults/**/coverage.cobertura.xml" \
+  -targetdir:"coverage" \
+  -reporttypes:Html \
+  -filefilters:"-**/obj/**"
+
+echo "✅ Reporte generado en coverage/index.html"
+
+```
 ---
 
 ## Angular CLI ⚡
