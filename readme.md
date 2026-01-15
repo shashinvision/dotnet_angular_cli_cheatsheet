@@ -537,7 +537,7 @@ dotnet test --settings test.runsettings
 dotnet add package coverlet.collector
 ```
 ```bash
-dotnet test --collect:"XPlat Code Coverage" /p:Threshold=70 /p:ThresholdStat=Total
+dotnet test --collect:"XPlat Code Coverage" --p:Threshold=70 --p:ThresholdStat=Total
 ```
 ### reportgenerator
 ```bash
@@ -589,7 +589,7 @@ chmod +x test-coverage.sh
 rm -rf TestResults/ coverage/
 
 # Tests con cobertura
-dotnet test --collect:"XPlat Code Coverage" /p:Threshold=70 /p:ThresholdStat=Total --settings coverlet.runsettings
+dotnet test --collect:"XPlat Code Coverage" --p:Threshold=70 --p:ThresholdStat=Total --settings coverlet.runsettings
 
 # Reporte ignorando archivos generados
 reportgenerator \
@@ -932,7 +932,7 @@ coverlet.runsettings
 </RunSettings>
 ```
 ```yaml
-dotnet test --collect:"XPlat Code Coverage" /p:Threshold=70 /p:ThresholdStat=Total --settings coverlet.runsettings
+dotnet test --collect:"XPlat Code Coverage" --p:Threshold=70 --p:ThresholdStat=Total --settings coverlet.runsettings
 ```
 ---
 
