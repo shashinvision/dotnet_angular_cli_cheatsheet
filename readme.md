@@ -169,6 +169,9 @@ dotnet run --urls "http://127.0.0.1:5001"
 dotnet watch
 dotnet watch --no-hot-reload  # Disable hot reload
 dotnet watch --no-hot-reload --project MyApi/MyApi.csproj
+
+# For specific environment with example appsettings.Development.json
+ASPNETCORE_ENVIRONMENT=Development dotnet watch --no-hot-reload --project MyApi/MyApi.csproj
 ```
 
 #### Package Management
